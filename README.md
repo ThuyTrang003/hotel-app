@@ -3,15 +3,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Getting Started
 
 First, run the development server:
+Install bun in (https://bun.sh/)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun run dev
+```
+
+Package manager
+
+```bash
+bun install //install all dependencies of a project
+bun add preact //add a particular package
+bun remove ts-node //remove a dependency
+bun update //update all dependencies to the latest version
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
