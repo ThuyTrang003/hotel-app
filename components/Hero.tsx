@@ -67,7 +67,7 @@ const Hero = () => {
               </div>
             </div>
             <div className="flex flex-col justify-end w-full xl:px-6">
-              <button className="bg-[#d9af63] text-white px-8 py-4 rounded-lg w-full hover:bg-[#c89d55] transition-colors duration-300">
+              <button className="bg-[#d9af63] text-white px-8 py-[10px] rounded-lg w-full hover:bg-[#c89d55] transition-colors duration-300">
                 CHECK AVAILABILITY
               </button>
             </div>
