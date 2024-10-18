@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { StarIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { Star, ChevronRight } from "lucide-react";
+
 
 
 const FAVORITEROOMS=[
@@ -42,7 +43,7 @@ const FavoriteRooms = () => {
         <div className="text-left flex justify-center py-4">
             <Link href="/room" className="inline-block px-6 py-3 text-white font-semibold bg-[#d7b263] rounded-md shadow-md hover:bg-[#caa354] transition-colors">
               View All Rooms
-              <ChevronRightIcon className="w-4 h-4 ml-2 inline-block" />
+              <ChevronRight className="w-4 h-4 ml-2 inline-block" />
             </Link>
           </div>
   </section>
@@ -76,7 +77,7 @@ const FavoriteRoomItem = ({ id, URL, title, price, description }: FavoriteRoomIt
           <hr className='mb-3' />
           <div className='flex justify-between'>
             <div className='flex items-center gap-x-2'>
-              <StarIcon className='h-5 w-5 text-yellow-500' />
+              <Star className='h-5 w-5 text-yellow-500' />
               <span className='medium-16'>(222)</span>
             </div>
           </div>

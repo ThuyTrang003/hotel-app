@@ -1,5 +1,6 @@
 "use client";
 
+
 const Hero = () => {
   return (
     <section
@@ -9,7 +10,7 @@ const Hero = () => {
       <div className="absolute h-full w-full bg-[#2f6a7f2f] top-0 bottom-0 z-10"></div>
 
       <video
-        src="/videos/video.mp4"
+        src='/videos/video.mp4'
         muted
         autoPlay
         loop

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRightIcon } from '@heroicons/react/24/solid';
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 const Feature = () => {
@@ -25,7 +25,7 @@ const Feature = () => {
           <div className="text-left">
             <Link href="/about-us" className="inline-block px-6 py-3 text-white font-semibold bg-[#d7b263] rounded-md shadow-md hover:bg-[#caa354] transition-colors">
               More Details
-              <ChevronRightIcon className="w-4 h-4 ml-2 inline-block" />
+              <ChevronRight className="w-5 h-5 ml-2 inline-block" />
             </Link>
           </div>
         </div>
