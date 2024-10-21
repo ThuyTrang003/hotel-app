@@ -4,6 +4,7 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  height: 200vh;
 }
 
 @layer utilities {
@@ -66,6 +67,28 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+}
+.max_padd_container{
+  @apply mx-auto max-w-[1440px] px-6 lg:px-20 xl:px-0;
+}
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.hover-effect:hover {
+  transition: transform 0.5s ease;
+}
+
+.hover-effect:hover:nth-child(1) {
+  transform: rotateY(-15deg);
+}
+
+.hover-effect:hover:nth-child(2) {
+  transform: rotateY(15deg);
+}
+.mx-25 {
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 @layer base {
