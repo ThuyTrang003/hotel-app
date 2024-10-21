@@ -1,6 +1,5 @@
-import NavBar from "@/features/home/components/navbar";
-import Footer from "@/features/home/components/footer";
-
+import { Footer } from "@/features/layout-customer/footer";
+import { NavBar } from "@/features/layout-customer/navbar";
 
 export default function RootLayout({
   children,
@@ -9,12 +8,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`bg-white text-tertiary overflow-x-hidden antialiased`}
-      >
+      <body className="bg-white text-tertiary overflow-x-hidden antialiased">
         <NavBar />
         {children}
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );
