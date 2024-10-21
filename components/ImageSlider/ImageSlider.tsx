@@ -2,14 +2,10 @@
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Zoom } from "react-slideshow-image";
-import 'react-slideshow-image/dist/styles.css';
+import "react-slideshow-image/dist/styles.css";
 import Image from "next/image";
 
-const images = [
-  "/images/image1.jpg",
-  "/images/image2.jpg",
-  "/images/image3.jpg"
-];
+const images = ["/image1.jpg", "/image2.jpg", "/image3.jpg"];
 
 const zoomInProperties = {
   scale: 1,
@@ -34,7 +30,10 @@ export default function ImageSlider() {
     <div className="w-full h-full">
       <Zoom {...zoomInProperties}>
         {images.map((each, index) => (
-          <div key={index} className="flex justify-center md:items-center items-start w-full h-full relative">
+          <div
+            key={index}
+            className="flex justify-center md:items-center items-start w-full h-full relative"
+          >
             <Image
               src={each}
               alt={`Slide ${index + 1}`}
@@ -42,7 +41,9 @@ export default function ImageSlider() {
               height={500}
               priority
             />
-            <h1 className="absolute md:top-50 top-54 insect-x-1/5 text-center z-10 md:text-6xl text-4xl bold text-white">Hello, user</h1>
+            <h1 className="absolute md:top-50 top-54 insect-x-1/5 text-center z-10 md:text-6xl text-4xl bold text-white">
+              Hello, user
+            </h1>
           </div>
         ))}
       </Zoom>

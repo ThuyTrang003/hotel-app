@@ -23,7 +23,10 @@ const Feature = () => {
             facilisis at vero eros et accumsan.
           </p>
           <div className="text-left">
-            <Link href="/about-us" className="inline-block px-6 py-3 text-white font-semibold bg-[#d7b263] rounded-md shadow-md hover:bg-[#caa354] transition-colors">
+            <Link
+              href="/about-us"
+              className="inline-block px-6 py-3 text-white font-semibold bg-[#d7b263] rounded-md shadow-md hover:bg-[#caa354] transition-colors"
+            >
               More Details
               <ChevronRight className="w-5 h-5 ml-2 inline-block" />
             </Link>
@@ -33,17 +36,17 @@ const Feature = () => {
           <div className="hover-effect relative h-full perspective-1000 group">
             <div className="relative z-50">
               <Image
-                src="/images/image1.jpg"
+                src="/image1.jpg"
                 width={500}
                 height={300}
                 alt="Hình 1"
                 className="w-[500px] h-[300px] object-cover rounded-lg shadow-lg transition-transform duration-300 ease-in-out hover:rotateY-6 hover:scale-105"
-                style={{ transform: 'translate(-100px, -10px)' }}
+                style={{ transform: "translate(-100px, -10px)" }}
               />
             </div>
             <div className="absolute top-[40px] z-10">
               <Image
-                src="/images/image2.jpg"
+                src="/image2.jpg"
                 width={500}
                 height={300}
                 alt="Hình 2"

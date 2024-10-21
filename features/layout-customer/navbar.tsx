@@ -26,7 +26,7 @@ export function NavBar() {
         <div className="lg:w-20 md:w-20">
           <Link href={"/"}>
             <Image
-              src="https://demo.zantetheme.com/wp-content/themes/zante/assets/images/logo.svg"
+              src="logo.svg"
               alt="Hotel"
               width={150}
               height={150}
