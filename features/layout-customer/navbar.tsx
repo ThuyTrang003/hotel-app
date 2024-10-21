@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function NavBar() {
+export function NavBar() {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function NavBar() {
         <div className="lg:w-20 md:w-20">
           <Link href={"/"}>
             <Image
-              src="https://demo.zantetheme.com/wp-content/themes/zante/assets/images/logo.svg"
+              src="logo.svg"
               alt="Hotel"
               width={150}
               height={150}
