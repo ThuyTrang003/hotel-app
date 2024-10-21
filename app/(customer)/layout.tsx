@@ -1,8 +1,7 @@
 import NavBar from "@/features/home/components/navbar";
 import Footer from "@/features/home/components/footer";
 
-
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -10,11 +9,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`bg-white text-tertiary overflow-x-hidden antialiased`}
+        className="bg-white text-tertiary overflow-x-hidden antialiased flex flex-col min-h-screen"
       >
         <NavBar />
-        {children}
-        <Footer/>
+        {/* Ensure main takes up remaining space */}
+        <main className="flex-grow">{children}</main>
+        {/* Footer will stay at the bottom */}
+        <Footer />
       </body>
     </html>
   );
