@@ -66,7 +66,7 @@ export function NavBar() {
                         <li>
                             <Link
                                 href={"/search"}
-                                className="bg-amber-1 hover:bg-amber-1/80 flex items-center justify-center gap-2 rounded-md px-4 py-2 font-bold text-white transition-colors duration-300 ease-in-out sm:px-6 sm:py-3 md:px-[30px] md:py-[10px]"
+                                className="flex items-center justify-center gap-2 rounded-md bg-amber-1 px-4 py-2 font-bold text-white transition-colors duration-300 ease-in-out hover:bg-amber-1/80 sm:px-6 sm:py-3 md:px-[30px] md:py-[10px]"
                             >
                                 BOOK ONLINE
                             </Link>
@@ -143,7 +143,7 @@ export function NavBar() {
                             <li>
                                 <Link
                                     href={"/search"}
-                                    className="bg-amber-1 flex items-center justify-center gap-2 rounded-md px-[30px] py-[10px] font-bold text-white transition-colors duration-300 ease-in-out hover:bg-[#c19a52]"
+                                    className="flex items-center justify-center gap-2 rounded-md bg-amber-1 px-[30px] py-[10px] font-bold text-white transition-colors duration-300 ease-in-out hover:bg-[#c19a52]"
                                 >
                                     BOOK ONLINE
                                 </Link>

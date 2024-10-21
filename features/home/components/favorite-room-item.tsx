@@ -20,7 +20,7 @@ export const FavoriteRoomItem = ({
         <div className="group overflow-hidden rounded-tl-xl rounded-tr-xl border border-slate-200">
             <Link href={`/room/${id}`} className="relative overflow-hidden">
                 <Image src={URL} height={366} width={640} alt="img" />
-                <span className="bold-16 group-hover:bg-amber-1 absolute bottom-0 right-1/2 translate-x-1/2 translate-y-1/2 rounded-full bg-black px-8 py-2 text-white">
+                <span className="bold-16 absolute bottom-0 right-1/2 translate-x-1/2 translate-y-1/2 rounded-full bg-black px-8 py-2 text-white group-hover:bg-amber-1">
                     $ {price}
                 </span>
             </Link>
