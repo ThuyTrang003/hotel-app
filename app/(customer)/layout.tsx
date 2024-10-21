@@ -1,7 +1,8 @@
-import NavBar from "@/features/home/components/navbar";
-import Footer from "@/features/home/components/footer";
 
-export default function HomeLayout({
+import { Footer } from "@/features/layout-customer/footer";
+import { NavBar } from "@/features/layout-customer/navbar";
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
