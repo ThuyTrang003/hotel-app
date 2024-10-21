@@ -26,7 +26,7 @@ const Feature = () => {
                     <div className="text-left">
                         <Link
                             href="/about-us"
-                            className="bg-amber-1 hover:bg-amber-1/80 inline-block rounded-md px-6 py-3 font-semibold text-white shadow-md transition-colors"
+                            className="inline-block rounded-md bg-amber-1 px-6 py-3 font-semibold text-white shadow-md transition-colors hover:bg-amber-1/80"
                         >
                             More Details
                             <ChevronRight className="ml-2 inline-block h-5 w-5" />
