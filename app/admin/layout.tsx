@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Navbar } from "@/features/admin/layout/Navbar";
-import { SidebarAdmin } from "@/features/admin/layout/Sidebar";
+import { SidebarAdmin } from "@/features/admin/layout/sidebar";
+import { Navbar } from "@/features/admin/layout/navbar";
 export default function Layout({
   children,
 }: Readonly<{
@@ -11,8 +11,10 @@ export default function Layout({
     <SidebarProvider>
       <SidebarAdmin />
       <div className="flex flex-grow flex-col max-h-screen">
-        <SidebarTrigger />
-        <Navbar />
+        <div className="flex items-center h-16 border-b">
+          <SidebarTrigger />
+          <Navbar />
+        </div>
         <main
           className={cn(
             "flex-grow bg-muted pl-14 transition-[margin-left] duration-300 ease-in-out"
