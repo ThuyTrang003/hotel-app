@@ -36,7 +36,7 @@ const items = [
     icon: Home,
   },
   {
-    title: "Room",
+    title: "Rooms",
     url: "/admin/rooms",
     icon: BedDouble,
   },
