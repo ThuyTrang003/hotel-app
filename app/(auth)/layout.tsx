@@ -1,12 +1,12 @@
 export default function AuthLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <main className="bg-white flex justify-between h-screen w-screen">
-      <section className="w-1/2 h-screen">{children}</section>
-      <div className=" m-2 bg-black w-1/2 rounded-xl"></div>
-    </main>
-  );
+    return (
+        <main className="flex h-screen w-screen justify-between bg-white">
+            <section className="h-screen w-1/2">{children}</section>
+            <div className="m-2 w-1/2 rounded-xl bg-black"></div>
+        </main>
+    );
 }

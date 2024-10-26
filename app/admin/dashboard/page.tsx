@@ -1,3 +1,14 @@
+"use client";
+
+import { useEffect } from "react";
+
+import { useSidebar } from "@/stores/admin/store-sidebar";
+
 export default function Page() {
-  return <div></div>;
+    const { setFocusState } = useSidebar();
+    useEffect(() => {
+        setFocusState("Dashboard");
+    }, []);
+
+    return <div></div>;
 }
