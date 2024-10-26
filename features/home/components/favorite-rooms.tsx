@@ -22,7 +22,7 @@ const FAVORITEROOMS = [
 
 export const FavoriteRooms = () => {
     return (
-        <section className="bg-slate-10 bg-gray-1 py-16 xl:py-28">
+        <section className="bg-slate-10 xl:py-18 bg-gray-1 py-10">
             <div className="mx-4 text-center">
                 <h1 className="text-2xl font-medium text-gray-700">
                     OUR FAVORITE ROOMS
