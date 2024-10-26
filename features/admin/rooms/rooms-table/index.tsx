@@ -1,4 +1,3 @@
-import RoomDataTable from "./demo";
 import { roomsData } from "./dummny-data";
 import { columns } from "./rooms-columns";
 
