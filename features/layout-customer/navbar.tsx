@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 export function NavBar() {
   const [active, setActive] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 40);
     };
@@ -15,7 +15,7 @@ export function NavBar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
+  
   return (
     <header
       className={`${
@@ -26,7 +26,7 @@ export function NavBar() {
         <div className="lg:w-20 md:w-20">
           <Link href={"/"}>
             <Image
-              src="logo.svg"
+              src="/logo.svg"
               alt="Hotel"
               width={150}
               height={150}

@@ -1,4 +1,4 @@
-
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,14 +8,25 @@ import {
   Coffee,
   Baby,
   Smartphone,
-  Tv,
   Bath,
-  ChevronRight,
 } from "lucide-react";
 
-export default function RoomItem() {
+export default function RoomItem({ checkIn, checkOut }) {
+  const focusBookingDates = () => {
+    if (!checkIn) {
+      const checkInInput = document.querySelector('input[name="checkIn"]');
+      if (checkInInput) checkInInput.focus();
+    }
+    else if (!checkOut) {
+      const checkOutInput = document.querySelector('input[name="checkOut"]');
+      if (checkOutInput) checkOutInput.focus();
+    }
+  };
+
+  const isBookingAvailable = checkIn && checkOut;
+
   return (
-    <div className="px-24 mb-5">
+    <div className="mb-5 py-5">
       <div className="flex flex-col md:flex-row justify-between items-start border rounded-lg shadow-sm overflow-hidden">
         <div className="w-full md:w-1/3">
           <Image
@@ -29,9 +40,10 @@ export default function RoomItem() {
 
         <div className="md:w-2/3 p-6 flex flex-col md:flex-row justify-between">
           <div className="md:w-2/3">
-            <h2 className="text-2xl font-bold mb-2">Type Room</h2>
+            <h2 className="text-2xl font-bold mb-2">Deluxe Room</h2>
             <p className="text-gray-600 text-base mb-4">
-              Description of Room
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
+              nonummy nibh euismod.
             </p>
             <div className="flex flex-wrap space-x-4 mb-4">
               <span className="p-2 border rounded">
@@ -55,9 +67,6 @@ export default function RoomItem() {
               <span className="p-2 border rounded">
                 <Smartphone className="h-6 w-6 text-gray-600" />
               </span>
-              <span className="p-2 border rounded">
-                <Tv className="h-6 w-6 text-gray-600" />
-              </span>
             </div>
           </div>
 
@@ -66,12 +75,22 @@ export default function RoomItem() {
               <span className="text-4xl font-semibold text-gray-400">€199</span>
               <span className="block text-gray-500 text-xs">PER NIGHT</span>
             </div>
-            <Link href="/room/1" className="text-blue-500 font-bold flex items-center text-center">
-                MORE DETAILS
-                <span className="flex items-center justify-center bg-blue-500 rounded-2xl ml-2 p-1">
-                  <ChevronRight className="h-4 w-4 text-white" />
-                </span>
-            </Link>
+
+            {isBookingAvailable ? (
+              <Link
+                href="/booking"
+                className="text-white bg-[#DEB666] font-bold flex items-center text-center py-3 px-5"
+              >
+                BOOK ROOM
+              </Link>
+            ) : (
+              <button
+                onClick={focusBookingDates}
+                className="text-gray-500 bg-gray-100 cursor-pointer font-semibold flex items-center justify-center text-center py-3 px-3 rounded"
+              >
+                Select Booking Dates
+              </button>
+            )}
           </div>
         </div>
       </div>

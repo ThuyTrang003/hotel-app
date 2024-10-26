@@ -13,7 +13,6 @@ export default function RootLayout({
         className="bg-white text-tertiary overflow-x-hidden antialiased flex flex-col min-h-screen"
       >
         <NavBar />
-        {/* Ensure main takes up remaining space */}
         <main className="flex-grow">{children}</main>
         {/* Footer will stay at the bottom */}
         <Footer />
@@ -21,3 +20,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -1,5 +1,5 @@
 "use client";
-import CarouselImage from '@/features/room/components/carouselImage';
+import CarouselImage from '@/features/room/components/carousel-image';
 import RoomInfo from '@/features/room/components/room-info';
 import { useParams } from 'next/navigation';
 
@@ -10,7 +10,7 @@ export default function RoomDetail() {
   return (
     <div className="">
       <CarouselImage/>
-      <RoomInfo/>
+      <RoomInfo roomId={id}/>
     </div>
   );
 }

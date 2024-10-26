@@ -1,7 +1,48 @@
 "use client";
 
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimeRangePicker } from "@mui/x-date-pickers-pro/DateTimeRangePicker";
+import { LicenseInfo } from "@mui/x-license";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Slider from "@mui/material/Slider";
+
+LicenseInfo.setLicenseKey(
+  "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y"
+);
 
 const Hero = () => {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [roomType, setRoomType] = useState("Single");
+  const [guestCount, setGuestCount] = useState();
+  const [sliderValue, setSliderValue] = useState(500);
+  const router = useRouter();
+
+  const handleCheckAvailability = () => {
+    router.push(
+      `/search?checkIn=${checkIn}&checkOut=${checkOut}&roomType=${roomType}`
+    );
+  };
+
+  const valuetext = (value: number) => {
+    return `${value}€`;
+  };
+
+  // Marks for the slider, you can adjust them as per your requirements
+  const marks = [
+    { value: 0, label: "0€" },
+    { value: 250, label: "250€" },
+    { value: 500, label: "500€" },
+    { value: 750, label: "750€" },
+    { value: 1000, label: "1000€" },
+  ];
+
   return (
     <section
       className=" w-full h-auto relative flexCenter min-h-screen"
@@ -10,7 +51,7 @@ const Hero = () => {
       <div className="absolute h-full w-full bg-[#2f6a7f2f] top-0 bottom-0 z-10"></div>
 
       <video
-        src='/videos/video.mp4'
+        src="/videos/video.mp4"
         muted
         autoPlay
         loop
@@ -21,54 +62,80 @@ const Hero = () => {
           <h1 className="text-5xl font-bold mb-4">Welcome to Our Website</h1>
           <p className="text-2xl">Discover amazing content with us!</p>
         </div>
-        <div className="mt-20 mx-5">
-          <div className="flex flex-col md:flex-row gap-6 md:gap-x-12 px-0 md:px-0 py-10 bg-white rounded-xl">
-            <div className="flex flex-col w-full xl:px-6">
-              <label htmlFor="checkInDate" className="text-black pb-2">
-                Checkin date:
-              </label>
-              <div>
-                <input
-                  type="date"
-                  className="bg-white outline-none w-full rounded-lg border border-gray-300 px-4 py-2"
-                />
-              </div>
+        <div className="mt-10 mx-5">
+          <div className="flex flex-col gap-6 px-0 py-10 bg-white rounded-xl items-center">
+            <div className="flex flex-row gap-6 items-center">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DateTimeRangePicker"]}>
+                  <DateTimeRangePicker
+                    localeText={{ start: "Check-in", end: "Check-out" }}
+                    className="flex-1 w-[550px] h-[48px] ml-10"
+                    sx={{
+                      ".MuiFormControl-root": {
+                        marginLeft: "20px",
+                      },
+                    }}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+
+              <Autocomplete
+                options={[
+                  { label: "The Shawshank Redemption", year: 1994 },
+                  { label: "The Godfather", year: 1972 },
+                ]}
+                sx={{ width: 230, height: 500 }}
+                className="h-12"
+                renderInput={(params) => (
+                  <TextField {...params} label="Type rooms" />
+                )}
+              />
+
+              <TextField
+                label="Guest"
+                value={guestCount}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (value === "" || Number(value) >= 0) {
+                    setGuestCount(value);
+                  }
+                }}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
+                type="number"
+                variant="outlined"
+                sx={{ width: "230px" }}
+                className="h-12"
+                InputProps={{
+                  sx: {
+                    height: "57px",
+                    padding: "20px",
+                  },
+                }}
+              />
+
+              <Slider
+                className="w-52"
+                value={sliderValue}
+                onChange={(e, newValue) => setSliderValue(newValue as number)}
+                getAriaValueText={valuetext}
+                aria-labelledby="price-slider"
+                step={10}
+                marks={marks}
+                min={0}
+                max={1000}
+                valueLabelDisplay="auto"
+              />
             </div>
-            <div className="flex flex-col w-full xl:px-6">
-              <label htmlFor="checkOutDate" className="text-black pb-2">
-                Checkout date:
-              </label>
-              <div>
-                <input
-                  type="date"
-                  className="bg-white outline-none w-full rounded-lg border border-gray-300 px-4 py-2"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col w-full xl:px-6">
-              <label htmlFor="roomType" className=" text-black pb-2">
-                Room type:
-              </label>
-              <div className="relative">
-                <select
-                  id="roomType"
-                  className="bg-white outline-none w-full rounded-lg border border-gray-300 px-4 py-[9px] appearance-none pr-8"
-                  style={{
-                    backgroundImage: `url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"%3E%3Cpath stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /%3E%3C/svg%3E')`,
-                    backgroundPosition: "right 0.75rem center",
-                    backgroundSize: "1.5rem",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                >
-                  <option value="single">Single Room</option>
-                  <option value="double">Double Room</option>
-                  <option value="suite">Suite</option>
-                  <option value="family">Family Room</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex flex-col justify-end w-full xl:px-6">
-              <button className="bg-[#d9af63] text-white px-8 py-[10px] rounded-lg w-full hover:bg-[#c89d55] transition-colors duration-300">
+
+            {/* Nút kiểm tra tính khả dụng, nằm dưới các input */}
+            <div className="w-full flex justify-center">
+              <button
+                onClick={handleCheckAvailability}
+                className="bg-[#d9af63] text-white px-8 py-3 rounded-lg hover:bg-[#c89d55] transition-colors duration-300"
+              >
                 CHECK AVAILABILITY
               </button>
             </div>
