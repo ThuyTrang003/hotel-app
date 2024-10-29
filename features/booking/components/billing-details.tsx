@@ -13,8 +13,7 @@ export default function BillingDetails() {
     phone: "",
     address: "",
     city: "",
-    adultCount: "",
-    childrenCount: "",
+    guest: "",
     specialRequests: "",
   });
   const handleValidateCoupon = (e) => {
@@ -28,7 +27,7 @@ export default function BillingDetails() {
       room: "Deluxe Room",
       branch: "Zante Greece",
       checkInOut: `${checkIn} → ${checkOut}`,
-      guests: `${bookingInfo.adultCount} Adult, ${bookingInfo.childrenCount} Children`,
+      guests: `${bookingInfo.guest} Guest`,
       totalPrice: couponValidated
         ? (roomPrice * (1 - discount / 100)).toFixed(2)
         : roomPrice,
@@ -149,35 +148,14 @@ export default function BillingDetails() {
                   }
                 />
                 <input
-                  type="text"
-                  placeholder="City"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.city}
-                  onChange={(e) =>
-                    setBookingInfo({ ...bookingInfo, city: e.target.value })
-                  }
-                />
-                <input
                   type="number"
-                  placeholder="Adult"
+                  placeholder="Guest"
                   className="border p-3 rounded-md mb-5"
                   value={bookingInfo.adultCount}
                   onChange={(e) =>
                     setBookingInfo({
                       ...bookingInfo,
                       adultCount: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Children"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.childrenCount}
-                  onChange={(e) =>
-                    setBookingInfo({
-                      ...bookingInfo,
-                      childrenCount: e.target.value,
                     })
                   }
                 />
@@ -250,10 +228,10 @@ export default function BillingDetails() {
                     <input
                       type="text"
                       placeholder="Enter coupon code if you have one"
-                      className="border w-[500px] flex items-center pl-4"
+                      className="border w-9/12 flex items-center pl-4"
                     />
                     <button
-                      className="bg-yellow-500 text-white p-3 rounded-md font-semibold ml-14"
+                      className="bg-yellow-500 text-white p-3 rounded-md font-semibold ml-20"
                       onClick={handleValidateCoupon}
                     >
                       VALIDATE CODE
@@ -326,7 +304,7 @@ export default function BillingDetails() {
           <div className="mb-4 flex justify-between">
             <p className="font-semibold text-sm text-gray-600">Guests</p>
             <p className="text-[13px] font-normal">
-              {bookingInfo.adultCount} Adult, {bookingInfo.childrenCount} Children
+              {bookingInfo.guest} Guest
             </p>
           </div>
 

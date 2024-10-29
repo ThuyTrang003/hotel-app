@@ -9,6 +9,7 @@ import {
   Baby,
   Smartphone,
   Bath,
+  Tv
 } from "lucide-react";
 
 export default function RoomItem({ checkIn, checkOut }) {
@@ -16,8 +17,7 @@ export default function RoomItem({ checkIn, checkOut }) {
     if (!checkIn) {
       const checkInInput = document.querySelector('input[name="checkIn"]');
       if (checkInInput) checkInInput.focus();
-    }
-    else if (!checkOut) {
+    } else if (!checkOut) {
       const checkOutInput = document.querySelector('input[name="checkOut"]');
       if (checkOutInput) checkOutInput.focus();
     }
@@ -29,23 +29,29 @@ export default function RoomItem({ checkIn, checkOut }) {
     <div className="mb-5 py-5">
       <div className="flex flex-col md:flex-row justify-between items-start border rounded-lg shadow-sm overflow-hidden">
         <div className="w-full md:w-1/3">
-          <Image
-            src="/image2.jpg"
-            width={450}
-            height={280}
-            alt="Deluxe Room"
-            className="w-full h-auto object-cover"
-          />
+          <Link href="/room/1">
+            <Image
+              src="/image2.jpg"
+              width={450}
+              height={280}
+              alt="Deluxe Room"
+              className="w-full h-auto object-cover cursor-pointer"
+            />
+          </Link>
         </div>
 
-        <div className="md:w-2/3 p-6 flex flex-col md:flex-row justify-between">
-          <div className="md:w-2/3">
-            <h2 className="text-2xl font-bold mb-2">Deluxe Room</h2>
+        <div className="md:w-2/3 flex flex-col md:flex-row justify-between">
+          <div className="md:w-2/3 p-6">
+            <Link href="/room/1">
+              <h2 className="text-2xl font-bold mb-2 cursor-pointer">
+                Deluxe Room
+              </h2>
+            </Link>
             <p className="text-gray-600 text-base mb-4">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
               nonummy nibh euismod.
             </p>
-            <div className="flex flex-wrap space-x-4 mb-4">
+            <div className="flex flex-wrap space-x-4">
               <span className="p-2 border rounded">
                 <Martini className="h-6 w-6 text-gray-600" />
               </span>
@@ -63,9 +69,6 @@ export default function RoomItem({ checkIn, checkOut }) {
               </span>
               <span className="p-2 border rounded">
                 <Baby className="h-6 w-6 text-gray-600" />
-              </span>
-              <span className="p-2 border rounded">
-                <Smartphone className="h-6 w-6 text-gray-600" />
               </span>
             </div>
           </div>

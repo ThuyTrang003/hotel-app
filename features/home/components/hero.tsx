@@ -24,24 +24,23 @@ const Hero = () => {
   const [sliderValue, setSliderValue] = useState(500);
   const router = useRouter();
 
-  const handleCheckAvailability = () => {
-    router.push(
-      `/search?checkIn=${checkIn}&checkOut=${checkOut}&roomType=${roomType}`
-    );
-  };
+  // const handleCheckAvailability = () => {
+  //   router.push(
+  //     `/search?checkIn=${checkIn}&checkOut=${checkOut}&roomType=${roomType}`
+  //   );
+  // };
 
-  const valuetext = (value: number) => {
-    return `${value}€`;
-  };
+  // const valuetext = (value: number) => {
+  //   return ${value}€;
+  // };
 
-  // Marks for the slider, you can adjust them as per your requirements
-  const marks = [
-    { value: 0, label: "0€" },
-    { value: 250, label: "250€" },
-    { value: 500, label: "500€" },
-    { value: 750, label: "750€" },
-    { value: 1000, label: "1000€" },
-  ];
+  // const marks = [
+  //   { value: 0, label: "0€" },
+  //   { value: 250, label: "250€" },
+  //   { value: 500, label: "500€" },
+  //   { value: 750, label: "750€" },
+  //   { value: 1000, label: "1000€" },
+  // ];
 
   return (
     <section
@@ -63,34 +62,39 @@ const Hero = () => {
           <p className="text-2xl">Discover amazing content with us!</p>
         </div>
         <div className="mt-10 mx-5">
-          <div className="flex flex-col gap-6 px-0 py-10 bg-white rounded-xl items-center">
-            <div className="flex flex-row gap-6 items-center">
+          <div className="flex flex-row gap-6 items-start py-10 px-32 bg-white rounded-xl">
+            <div className="flex flex-col">
+              <label className="text-lg font-bold">
+                Check-in and Check-out date
+              </label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DateTimeRangePicker"]}>
                   <DateTimeRangePicker
                     localeText={{ start: "Check-in", end: "Check-out" }}
-                    className="flex-1 w-[550px] h-[48px] ml-10"
+                    className="w-full h-full"
                     sx={{
-                      ".MuiFormControl-root": {
-                        marginLeft: "20px",
-                      },
+                      ".MuiFormControl-root": {},
                     }}
                   />
                 </DemoContainer>
               </LocalizationProvider>
-
+            </div>
+            <div className="flex flex-col">
+              <label className="text-lg font-bold">Room Types</label>
               <Autocomplete
                 options={[
                   { label: "The Shawshank Redemption", year: 1994 },
                   { label: "The Godfather", year: 1972 },
                 ]}
-                sx={{ width: 230, height: 500 }}
-                className="h-12"
+                sx={{ width: 210, height: 500 }}
+                className="h-12 mt-2"
                 renderInput={(params) => (
                   <TextField {...params} label="Type rooms" />
                 )}
               />
-
+            </div>
+            <div className="flex flex-col">
+              <label className="text-lg font-bold">Guests</label>
               <TextField
                 label="Guest"
                 value={guestCount}
@@ -106,36 +110,28 @@ const Hero = () => {
                 }}
                 type="number"
                 variant="outlined"
-                sx={{ width: "230px" }}
+                sx={{ width: "210px" }}
                 className="h-12"
                 InputProps={{
                   sx: {
                     height: "57px",
                     padding: "20px",
+                    marginTop: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                  },
+                }}
+                InputLabelProps={{
+                  sx: {
+                    display: "flex",
+                    justifyContent: "center",
+                    paddingTop:"9px"
                   },
                 }}
               />
-
-              <Slider
-                className="w-52"
-                value={sliderValue}
-                onChange={(e, newValue) => setSliderValue(newValue as number)}
-                getAriaValueText={valuetext}
-                aria-labelledby="price-slider"
-                step={10}
-                marks={marks}
-                min={0}
-                max={1000}
-                valueLabelDisplay="auto"
-              />
             </div>
-
-            {/* Nút kiểm tra tính khả dụng, nằm dưới các input */}
-            <div className="w-full flex justify-center">
-              <button
-                onClick={handleCheckAvailability}
-                className="bg-[#d9af63] text-white px-8 py-3 rounded-lg hover:bg-[#c89d55] transition-colors duration-300"
-              >
+            <div className="flex items-center mt-9">
+              <button className="bg-[#d9af63] text-white px-8 py-4 rounded-lg hover:bg-[#c89d55] transition-colors duration-300">
                 CHECK AVAILABILITY
               </button>
             </div>

@@ -52,6 +52,7 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        wheat:"#F5F3F0",
       },
       borderRadius: {
         lg: "var(--radius)",

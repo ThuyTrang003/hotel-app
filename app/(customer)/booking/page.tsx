@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-
-import Progressbar from '@/features/booking/components/progressbar';
 import BillingDetails from '@/features/booking/components/billing-details';
+import Stepper from "@/features/room/components/stepper"
 
 export default function Booking() {
   const [roomId, setRoomId] = useState(null);
@@ -17,7 +16,7 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* <Progressbar/> */}
+      <Stepper/>
       <BillingDetails/>
     </div>
   );
