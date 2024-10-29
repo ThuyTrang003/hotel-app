@@ -15,8 +15,11 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
+
+import { useLogout } from "@/hooks/auth-hook/useAuth";
 
 import { useSidebar } from "@/stores/admin/store-sidebar";
 
@@ -82,10 +85,14 @@ const items = [
 ];
 
 export function SidebarAdmin() {
+    const { data: logout } = useLogout();
     const router = useRouter();
     const { focusState } = useSidebar();
     const handleLogout = () => {
-        router.push("/");
+        if (logout) {
+            toast("Logout successfully!");
+            router.push("/");
+        }
     };
     return (
         <Sidebar>

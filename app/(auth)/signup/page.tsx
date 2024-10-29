@@ -1,16 +1,9 @@
-import { AuthLayout } from "@/features/auth/layout/auth.layout";
-import { SignupForm } from "@/features/auth/components/signup-form";
+import { SignupTabs } from "@/features/auth/components/signup-tabs";
 
 export default function SigninPage() {
-  return (
-    <div className="flex flex-col justify-center items-center h-full">
-      <AuthLayout
-        title="Create your account"
-        subTitle="Sign up to access."
-        isSignin={false}
-      >
-        <SignupForm />
-      </AuthLayout>
-    </div>
-  );
+    return (
+        <div className="flex h-full flex-col items-center justify-center">
+            <SignupTabs />
+        </div>
+    );
 }
