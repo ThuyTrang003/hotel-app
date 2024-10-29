@@ -68,6 +68,11 @@ export default function Room() {
       ) : (
         rooms.map((room, index) => <RoomItem key={index} {...room} />)
       )} */}
+      <RoomItem />
+      <RoomItem />
+      <RoomItem />
+      <RoomItem />
+      <RoomItem />
 
       {/* Pagination */}
       <div className="flex justify-center mt-8 space-x-4">

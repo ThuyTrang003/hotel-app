@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Progressbar from "@/features/checkout/components/progressbar";
 import BookingDetail from "@/features/checkout/components/booking-details";
 import PaymentOption from "@/features/checkout/components/payment-option";
+import Stepper from "@/features/room/components/stepper"
 
 export default function Checkout() {
   const [bookingInfo, setBookingInfo] = useState(null);
@@ -22,7 +22,7 @@ export default function Checkout() {
 
   return (
     <>
-      <Progressbar />
+      <Stepper/>
       <div className="container mx-auto px-6 py-8 min-h-screen">
         <h2 className="text-3xl font-semibold mb-6">Booking Details</h2>
         <BookingDetail bookingInfo={bookingInfo} />
