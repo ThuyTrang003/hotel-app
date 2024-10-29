@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export function NavBar() {
+export default function NavBar() {
   const [active, setActive] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 40);
     };
@@ -15,7 +15,7 @@ export function NavBar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
   return (
     <header
       className={`${
@@ -26,7 +26,7 @@ export function NavBar() {
         <div className="lg:w-20 md:w-20">
           <Link href={"/"}>
             <Image
-              src="/logo.svg"
+              src="https://demo.zantetheme.com/wp-content/themes/zante/assets/images/logo.svg"
               alt="Hotel"
               width={150}
               height={150}

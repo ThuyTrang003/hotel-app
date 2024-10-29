@@ -2,7 +2,29 @@ import Link from "next/link";
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import { FavoriteRoomItem } from "./favorite-room-item";
+import Link from "next/link";
+import React from "react";
+import { ChevronRight } from "lucide-react";
+import { FavoriteRoomItem } from "./favorite-room-item";
 
+const FAVORITEROOMS = [
+  {
+    id: "1",
+    title: "Single Room",
+    price: "2400",
+    URL: "/image1.jpg",
+    description: "Đẹp lắm",
+  },
+  {
+    id: "2",
+    title: "Single Room",
+    price: "2400",
+    URL: "/image1.jpg",
+    description: "Đẹp lắm",
+  },
+];
+
+export const FavoriteRooms = () => {
 const FAVORITEROOMS = [
   {
     id: "1",

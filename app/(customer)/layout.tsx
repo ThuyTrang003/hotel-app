@@ -9,12 +9,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className="bg-white text-tertiary overflow-x-hidden antialiased flex flex-col min-h-screen"
-      >
+      <body className="bg-white text-tertiary overflow-x-hidden antialiased flex flex-col min-h-screen">
         <NavBar />
         <main className="flex-grow">{children}</main>
-        {/* Footer will stay at the bottom */}
         <Footer />
       </body>
     </html>
