@@ -10,6 +10,8 @@ import { toast } from "sonner";
 
 import { useSignin } from "@/hooks/auth-hook/useAuth";
 
+import { useUserAccount } from "@/stores/user-account/store-user-account";
+
 import { ErrorField } from "@/components/error-field";
 import { IconInput, RightIcon } from "@/components/icon-input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function SigninForm() {
+    const { setUserAccount } = useUserAccount();
     const router = useRouter();
     const { mutate: signinMutate, isPending } = useSignin();
 
@@ -33,9 +36,14 @@ export function SigninForm() {
     const onSubmit = handleSubmit((data) => {
         console.log(data);
         signinMutate(data, {
-            onSuccess: () => {
+            onSuccess: (res) => {
                 toast("Signin successfully!");
-                router.replace("/");
+                if (res.role === "Customer") {
+                    router.replace("/");
+                } else {
+                    router.replace("/admin/dashboard");
+                }
+                setUserAccount(res.user_id, res.role);
             },
             onError: (error) => {
                 console.log(error);

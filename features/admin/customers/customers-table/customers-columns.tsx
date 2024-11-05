@@ -2,9 +2,6 @@
 
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-
-import { moneyFormatter } from "@/utils/money-formatter";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,17 +13,20 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Room {
-    roomNumber: string;
-    typeName: string;
-    description: string;
-    images: string[];
-    price: number;
+interface Customer {
+    id: string;
+    phoneNumber: string;
+    email: string;
+    fullName: string;
+    gender: string;
+    birthDate: string;
+    point: number;
+    isVerified: boolean;
 }
 
-export const columns: ColumnDef<Room>[] = [
+export const customersColumns: ColumnDef<Customer>[] = [
     {
-        accessorKey: "roomNumber",
+        accessorKey: "phoneNumber",
         header: ({ column }) => {
             return (
                 <Button
@@ -36,15 +36,15 @@ export const columns: ColumnDef<Room>[] = [
                     }
                     className="px-0"
                 >
-                    Room Number
+                    Phone Number
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
-        cell: ({ row }) => <div>{row.getValue("roomNumber")}</div>,
+        cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
     },
     {
-        accessorKey: "typeName",
+        accessorKey: "fullName",
         header: ({ column }) => {
             return (
                 <Button
@@ -54,44 +54,17 @@ export const columns: ColumnDef<Room>[] = [
                     }
                     className="px-0"
                 >
-                    Type
+                    Full name
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => (
-            <div className="text-left capitalize">
-                {row.getValue("typeName")}
-            </div>
+            <div className="text-left">{row.getValue("fullName")}</div>
         ),
     },
     {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ row }) => (
-            <div className="text-left capitalize">
-                {row.getValue("description")}
-            </div>
-        ),
-    },
-    {
-        accessorKey: "images",
-        header: "Image",
-        cell: ({ row }) => {
-            const images = row.getValue("images") as string[];
-            return (
-                <Image
-                    src={images[0]}
-                    alt={`Room ${row.getValue("roomNumber")}`}
-                    className="h-16 w-16 rounded object-cover"
-                    height={100}
-                    width={100}
-                />
-            );
-        },
-    },
-    {
-        accessorKey: "price",
+        accessorKey: "gender",
         header: ({ column }) => {
             return (
                 <Button
@@ -101,22 +74,38 @@ export const columns: ColumnDef<Room>[] = [
                     }
                     className="px-0"
                 >
-                    Price
+                    Gender
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => <div>{row.getValue("gender")}</div>,
+    },
+    {
+        accessorKey: "birthDate",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="px-0"
+                >
+                    Birth date
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => (
-            <div className="text-left">
-                {moneyFormatter(row.getValue("price"))}
-            </div>
+            <div className="text-left">{row.getValue("birthDate")}</div>
         ),
     },
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const room = row.original;
+            const customer = row.original;
 
             return (
                 <DropdownMenu>
