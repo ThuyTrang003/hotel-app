@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
+import axios from "axios"; // Import axios
 
 import { IconInput, RightIcon } from "@/components/icon-input";
 import { CardContent, CardDescription } from "@/components/ui/card";
@@ -11,6 +12,9 @@ import { useState } from "react";
 import { AuthDTO } from "../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorField } from "@/components/error-field";
+
+// Thiết lập axios với thuộc tính withCredentials
+axios.defaults.withCredentials = true;
 
 export function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +26,32 @@ export function SigninForm() {
     resolver: zodResolver(AuthDTO.signinSchema),
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      // Gọi API đăng nhập bằng axios
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+
+      // Xử lý kết quả phản hồi từ API
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
+        // router.push("/dashboard");
+      } else {
+        console.error("Login failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Error during login:",
+        error.response?.data || error.message
+      );
+    }
   });
+
   return (
     <form onSubmit={onSubmit}>
       <CardContent className="flex flex-col">
@@ -49,7 +76,6 @@ export function SigninForm() {
                 onClick={() => {
                   setShowPassword(!showPassword);
                 }}
-                //disabled={isPending}
               >
                 {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
               </button>
@@ -63,7 +89,7 @@ export function SigninForm() {
         </CardDescription>
       </CardContent>
       <CardContent className="flex flex-col space-y-4">
-        <Button>Sign in</Button>
+        <Button type="submit">Sign in</Button>
       </CardContent>
     </form>
   );
