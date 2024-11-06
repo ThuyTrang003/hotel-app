@@ -10,3 +10,14 @@ export const getAllCustomers = async () => {
         throw error.response.data.error;
     }
 };
+
+export const getCustomerById = async (id) => {
+    const url = `/api/customers/${id}`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Get all customers failed:", error);
+        throw error.response.data.error;
+    }
+};

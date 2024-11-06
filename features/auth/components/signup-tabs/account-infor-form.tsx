@@ -1,5 +1,6 @@
 "use client";
 
+import { IInfor } from "../../types/infor-type";
 import { AccountInfor, AuthDTO } from "../../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -15,7 +16,7 @@ import { Label } from "@/components/ui/label";
 
 interface AccountInforFormProp {
     setActiveTab: (value: string) => void;
-    setSignupData: (value: object) => void;
+    setSignupData: (value: IInfor) => void;
 }
 export function AccountInforForm({
     setActiveTab,
@@ -36,6 +37,7 @@ export function AccountInforForm({
         setActiveTab("personal");
         setSignupData({ ...data });
     });
+
     return (
         <form onSubmit={onSubmit}>
             <CardContent className="flex flex-col">

@@ -86,18 +86,21 @@ const items = [
 ];
 
 export function SidebarAdmin() {
-    const { data: logout } = useLogout();
+    const { mutate: logout } = useLogout();
     const router = useRouter();
     const { focusState } = useSidebar();
-    const { resetUserAccount, userAccount } = useUserAccount();
+    const { resetUserAccount } = useUserAccount();
     const handleLogout = () => {
-        if (logout) {
-            toast("Logout successfully!");
-            router.push("/");
-            resetUserAccount();
-        } else {
-            toast("Logout fail!");
-        }
+        logout(undefined, {
+            onSuccess: () => {
+                toast("Logout successfully!");
+                router.push("/");
+                resetUserAccount();
+            },
+            onError: () => {
+                toast("Logout failed!");
+            },
+        });
     };
     return (
         <Sidebar>

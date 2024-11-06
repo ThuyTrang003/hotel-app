@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthLayout } from "../../layout/auth.layout";
+import { IInfor } from "../../types/infor-type";
 import { AccountInforForm } from "./account-infor-form";
 import { PersonalInforForm } from "./personal-infor-form";
 import { useState } from "react";
@@ -9,9 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function SignupTabs() {
     const [activeTab, setActiveTab] = useState("account");
-    const [signupData, setSignupData] = useState({});
-
-    console.log(signupData);
+    const [signupData, setSignupData] = useState<IInfor>();
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab}>

@@ -15,7 +15,7 @@ export const useSignup = () => {
     return useMutation({ mutationFn: signup });
 };
 export const useLogout = () => {
-    return useQuery({ queryKey: ["logout"], queryFn: logout });
+    return useMutation({ mutationFn: logout });
 };
 export const useGetUserAccount = () => {
     return useQuery({ queryKey: ["getUserAccount"], queryFn: getUserAccount });

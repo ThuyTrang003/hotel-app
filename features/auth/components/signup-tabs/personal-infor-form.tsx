@@ -1,11 +1,14 @@
 "use client";
 
+import { IInfor } from "../../types/infor-type";
 import { AuthDTO, PersonalInfor } from "../../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useSignup } from "@/hooks/auth-hook/useAuth";
+import { useGetCustomerById } from "@/hooks/customers-hook/useCustomers";
 
 import { genderType } from "@/types/gender-type";
 
@@ -23,13 +26,27 @@ import {
 } from "@/components/ui/select";
 
 interface PersonalInforFormProp {
-    signupData: object;
-    setSignupData: (value: object) => void;
+    signupData: IInfor | undefined;
+    setSignupData: (value: IInfor) => void;
 }
 export function PersonalInforForm({
     signupData,
     setSignupData,
 }: PersonalInforFormProp) {
+    // thay thế bằng customerByEmail
+    // const { data: customerById, isSuccess } = useGetCustomerById(
+    //     signupData?.email,
+    // );
+    const [defaultValues, setDefaultValues] = useState({});
+
+    // if (isSuccess) {
+    //     setDefaultValues({
+    //         fullName: customerById.fullName,
+    //         gender: customerById.gender,
+    //         dateOfBirth: customerById.birthDate,
+    //         phoneNumber: customerById.phoneNumber,
+    //     });
+    // }
     const {
         register,
         handleSubmit,
@@ -37,7 +54,9 @@ export function PersonalInforForm({
         formState: { errors },
     } = useForm<PersonalInfor>({
         resolver: zodResolver(AuthDTO.personalInforSchema),
+        defaultValues,
     });
+
     const { mutate: signupMutate, isPending } = useSignup();
 
     const onSubmit = handleSubmit((data) => {
