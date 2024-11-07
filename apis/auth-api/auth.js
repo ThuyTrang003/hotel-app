@@ -41,13 +41,13 @@ export const logout = async () => {
     }
 };
 
-export const getUserAccount = async () => {
+export const getIsAuthorization = async () => {
     const url = "/api/auth/current-user";
     try {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        console.error("Authentication failed:", error);
+        console.error("Authorization failed:", error);
         throw error.response.data.error;
     }
 };

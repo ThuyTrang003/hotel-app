@@ -1,7 +1,7 @@
 "use client";
 
 import {
-    getUserAccount,
+    getIsAuthorization,
     logout,
     signin,
     signup,
@@ -17,6 +17,6 @@ export const useSignup = () => {
 export const useLogout = () => {
     return useMutation({ mutationFn: logout });
 };
-export const useGetUserAccount = () => {
-    return useQuery({ queryKey: ["getUserAccount"], queryFn: getUserAccount });
+export const useGetIsAuthorization = () => {
+    return useMutation({ mutationFn: getIsAuthorization });
 };

@@ -14,7 +14,7 @@ export default function AuthLayout({
     const router = useRouter();
     useEffect(() => {
         if (userAccount) {
-            if (userAccount !== null) {
+            if (userAccount.id !== "") {
                 router.replace("/"); // Chuyển hướng nếu đã login
             }
         }

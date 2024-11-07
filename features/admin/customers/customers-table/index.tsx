@@ -10,7 +10,7 @@ export function CustomersTable() {
         isSuccess,
         isError,
         error,
-    } = useGetAllCustomers();
+    } = useGetAllCustomers({});
     if (isSuccess) {
         console.log(allCustomersData);
     } else if (isError) {
@@ -18,11 +18,13 @@ export function CustomersTable() {
     }
     return (
         <>
-            {/* <DataTable
-                columns={customersColumns}
-                data={allCustomersData}
-                pageSizeValue={4}
-            /> */}
+            {allCustomersData && (
+                <DataTable
+                    columns={customersColumns}
+                    data={allCustomersData}
+                    pageSizeValue={7}
+                />
+            )}
         </>
     );
 }

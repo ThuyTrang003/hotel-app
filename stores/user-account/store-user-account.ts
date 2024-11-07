@@ -18,7 +18,9 @@ export const useUserAccount = create(
                         role: role,
                     },
                 })),
-            resetUserAccount: () => set(() => ({ userAccount: null })),
+            //khi logout và hết token
+            resetUserAccount: () =>
+                set(() => ({ userAccount: { id: "", role: "" } })),
         }),
         {
             name: "userAccount",

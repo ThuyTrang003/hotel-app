@@ -102,6 +102,45 @@ export const customersColumns: ColumnDef<Customer>[] = [
         ),
     },
     {
+        accessorKey: "role",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="px-0"
+                >
+                    Type
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => <div>{row.getValue("role")}</div>,
+    },
+    {
+        accessorKey: "point",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="px-0"
+                >
+                    Point
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("point")}</div>
+        ),
+    },
+
+    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -120,7 +159,6 @@ export const customersColumns: ColumnDef<Customer>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>

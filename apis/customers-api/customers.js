@@ -1,9 +1,11 @@
 import axios from "@/apis/api-constant";
 
-export const getAllCustomers = async () => {
+export const getAllCustomers = async (params) => {
     const url = "/api/customers";
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            params,
+        });
         return response.data;
     } catch (error) {
         console.error("Get all customers failed:", error);
