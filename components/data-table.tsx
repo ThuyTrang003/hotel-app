@@ -89,23 +89,29 @@ export function DataTable<TData, TValue>({
                     {isHeader && (
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => {
-                                        return (
-                                            <TableHead
-                                                key={header.id}
-                                                className="text-base"
-                                            >
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext(),
-                                                      )}
-                                            </TableHead>
-                                        );
-                                    })}
+                                <TableRow
+                                    key={headerGroup.id}
+                                    className="hover:bg-transparent"
+                                >
+                                    {headerGroup.headers.map(
+                                        (header, index) => {
+                                            return (
+                                                <TableHead
+                                                    key={index}
+                                                    className="text-base"
+                                                >
+                                                    {header.isPlaceholder
+                                                        ? null
+                                                        : flexRender(
+                                                              header.column
+                                                                  .columnDef
+                                                                  .header,
+                                                              header.getContext(),
+                                                          )}
+                                                </TableHead>
+                                            );
+                                        },
+                                    )}
                                 </TableRow>
                             ))}
                         </TableHeader>
@@ -120,17 +126,16 @@ export function DataTable<TData, TValue>({
                                         row.getIsSelected() && "selected"
                                     }
                                 >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className="text-base"
-                                        >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </TableCell>
-                                    ))}
+                                    {row
+                                        .getVisibleCells()
+                                        .map((cell, index) => (
+                                            <TableCell key={index}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext(),
+                                                )}
+                                            </TableCell>
+                                        ))}
                                 </TableRow>
                             ))
                         ) : (

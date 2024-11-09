@@ -1,20 +1,20 @@
-import { customersColumns } from "./customers-columns";
+import { staffsColumns } from "./staffs-columns";
 
-import { useGetAllCustomers } from "@/hooks/customers-hook/useCustomers";
+import { useGetAllStaffs } from "@/hooks/staffs-hook/useStaffs";
 
 import { DataTable } from "@/components/data-table";
 import TableSkeleton from "@/components/table-skeleton";
 
-export function CustomersTable() {
+export function StaffsTable() {
     const {
-        data: allCustomersData,
+        data: allStaffsData,
         isSuccess,
         isError,
         error,
         isPending,
-    } = useGetAllCustomers({});
+    } = useGetAllStaffs({});
     if (isSuccess) {
-        console.log(allCustomersData);
+        console.log(allStaffsData);
     } else if (isError) {
         console.log(error);
     }
@@ -23,10 +23,10 @@ export function CustomersTable() {
     }
     return (
         <>
-            {allCustomersData && (
+            {allStaffsData && (
                 <DataTable
-                    columns={customersColumns}
-                    data={allCustomersData}
+                    columns={staffsColumns}
+                    data={allStaffsData}
                     pageSizeValue={7}
                 />
             )}

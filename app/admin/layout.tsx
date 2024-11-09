@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 router.replace("/"); // Chuyển hướng nếu không phải admin
             }
         }
-    }, [userAccount]);
+    }, [userAccount, router]);
     console.log(userAccount);
     return (
         <SidebarProvider>

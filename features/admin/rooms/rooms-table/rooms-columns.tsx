@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { moneyFormatter } from "@/utils/money-formatter";
 
+import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -17,14 +18,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface Room {
+    _id: string;
     roomNumber: string;
-    typeName: string;
+    typeId: {
+        _id: string;
+        typename: string;
+        images: string[];
+    };
     description: string;
-    images: string[];
     price: number;
+    status: string;
 }
 
-export const columns: ColumnDef<Room>[] = [
+export const roomsColumns: ColumnDef<Room>[] = [
     {
         accessorKey: "roomNumber",
         header: ({ column }) => {
@@ -44,7 +50,7 @@ export const columns: ColumnDef<Room>[] = [
         cell: ({ row }) => <div>{row.getValue("roomNumber")}</div>,
     },
     {
-        accessorKey: "typeName",
+        accessorKey: "typeId",
         header: ({ column }) => {
             return (
                 <Button
@@ -61,7 +67,7 @@ export const columns: ColumnDef<Room>[] = [
         },
         cell: ({ row }) => (
             <div className="text-left capitalize">
-                {row.getValue("typeName")}
+                {row.original.typeId.typename}
             </div>
         ),
     },
@@ -75,19 +81,12 @@ export const columns: ColumnDef<Room>[] = [
         ),
     },
     {
-        accessorKey: "images",
+        accessorKey: "typeId",
         header: "Image",
         cell: ({ row }) => {
-            const images = row.getValue("images") as string[];
-            return (
-                <Image
-                    src={images[0]}
-                    alt={`Room ${row.getValue("roomNumber")}`}
-                    className="h-16 w-16 rounded object-cover"
-                    height={100}
-                    width={100}
-                />
-            );
+            const images = row.original.typeId.images as string[];
+            if (images.length === 0) return <div>No image</div>;
+            return <ImageCarousel images={images} />;
         },
     },
     {

@@ -4,6 +4,7 @@ import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { dateFormatter } from "@/utils/date-formatter";
+import { moneyFormatter } from "@/utils/money-formatter";
 
 import { roleFormatter } from "@/features/admin/utils/role-formatter";
 
@@ -17,18 +18,19 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Customer {
+interface Staff {
     id: string;
     phoneNumber: string;
     email: string;
     fullName: string;
     gender: string;
     birthDate: string;
-    point: number;
     isVerified: boolean;
+    role: string;
+    salary: number;
 }
 
-export const customersColumns: ColumnDef<Customer>[] = [
+export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "phoneNumber",
         header: ({ column }) => {
@@ -65,6 +67,26 @@ export const customersColumns: ColumnDef<Customer>[] = [
         },
         cell: ({ row }) => (
             <div className="text-left">{row.getValue("fullName")}</div>
+        ),
+    },
+    {
+        accessorKey: "email",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="px-0"
+                >
+                    Email
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("email")}</div>
         ),
     },
     {
@@ -118,7 +140,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Type
+                    Role
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
@@ -126,7 +148,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
         cell: ({ row }) => <div>{roleFormatter(row.getValue("role"))}</div>,
     },
     {
-        accessorKey: "point",
+        accessorKey: "salary",
         header: ({ column }) => {
             return (
                 <Button
@@ -136,16 +158,13 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Point
+                    Salary
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
-        cell: ({ row }) => (
-            <div className="text-left">{row.getValue("point")}</div>
-        ),
+        cell: ({ row }) => <div>{moneyFormatter(row.getValue("salary"))}</div>,
     },
-
     {
         id: "actions",
         enableHiding: false,

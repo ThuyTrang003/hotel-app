@@ -2,11 +2,11 @@
 
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 
-import { dateFormatter } from "@/utils/date-formatter";
+import { moneyFormatter } from "@/utils/money-formatter";
 
-import { roleFormatter } from "@/features/admin/utils/role-formatter";
-
+import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -17,20 +17,27 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Customer {
-    id: string;
-    phoneNumber: string;
-    email: string;
-    fullName: string;
-    gender: string;
-    birthDate: string;
-    point: number;
-    isVerified: boolean;
+interface TypeRoom {
+    _id: string;
+    description: string;
+    typename: string;
+    limit: number;
+    price: {
+        hourlyRate: number;
+        dailyRate: number;
+    };
+    images: string[];
+    availableRoom: number;
+    rating: {
+        averageScore: number;
+        totalRating: number;
+    };
 }
+const onViewDetail = () => {};
 
-export const customersColumns: ColumnDef<Customer>[] = [
+export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
     {
-        accessorKey: "phoneNumber",
+        accessorKey: "typename",
         header: ({ column }) => {
             return (
                 <Button
@@ -40,15 +47,34 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Phone Number
+                    Type name
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
-        cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
+        cell: ({ row }) => <div>{row.getValue("typename")}</div>,
     },
     {
-        accessorKey: "fullName",
+        accessorKey: "images",
+        header: "Image",
+        cell: ({ row }) => {
+            const images = row.original.images as string[];
+
+            if (!images || images.length === 0) return <div>No image</div>;
+            return <ImageCarousel images={images} />;
+        },
+    },
+    {
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row }) => (
+            <div className="text-left capitalize">
+                {row.getValue("description")}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "limit",
         header: ({ column }) => {
             return (
                 <Button
@@ -58,17 +84,17 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Full name
+                    Limit person
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => (
-            <div className="text-left">{row.getValue("fullName")}</div>
+            <div className="text-left">{row.original.limit}</div>
         ),
     },
     {
-        accessorKey: "gender",
+        accessorKey: "availableRoom",
         header: ({ column }) => {
             return (
                 <Button
@@ -78,15 +104,18 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Gender
+                    Available rooms
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
-        cell: ({ row }) => <div>{row.getValue("gender")}</div>,
+        cell: ({ row }) => (
+            <div className="text-left">{row.original.limit}</div>
+        ),
     },
+
     {
-        accessorKey: "birthDate",
+        accessorKey: "price",
         header: ({ column }) => {
             return (
                 <Button
@@ -96,19 +125,19 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Birth date
+                    Daily rate
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => (
             <div className="text-left">
-                {dateFormatter(row.getValue("birthDate"))}
+                {moneyFormatter(row.original.price?.dailyRate)}
             </div>
         ),
     },
     {
-        accessorKey: "role",
+        accessorKey: "price",
         header: ({ column }) => {
             return (
                 <Button
@@ -118,39 +147,22 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     }
                     className="px-0"
                 >
-                    Type
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => <div>{roleFormatter(row.getValue("role"))}</div>,
-    },
-    {
-        accessorKey: "point",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Point
+                    Hourly rate
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
         cell: ({ row }) => (
-            <div className="text-left">{row.getValue("point")}</div>
+            <div className="text-left">
+                {moneyFormatter(row.original.price?.hourlyRate)}
+            </div>
         ),
     },
-
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const customer = row.original;
+            const typeRoom = row.original;
 
             return (
                 <DropdownMenu>
@@ -165,8 +177,15 @@ export const customersColumns: ColumnDef<Customer>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
+                        <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                console.log({ typeRoom });
+                            }}
+                        >
+                            Edit
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
