@@ -1,8 +1,8 @@
 "use client";
 
+import { TypeRoomDialog } from "./type-room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
 
 import { moneyFormatter } from "@/utils/money-formatter";
 
@@ -179,13 +179,23 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem
-                            onClick={() => {
-                                console.log({ typeRoom });
+                        <TypeRoomDialog
+                            defaultValue={{
+                                description: typeRoom.description,
+                                typename: typeRoom.typename,
+                                limit: typeRoom.limit,
+                                dailyRate: typeRoom.price?.dailyRate,
+                                hourlyRate: typeRoom.price?.hourlyRate,
+                                existingImages: typeRoom.images,
                             }}
+                            typeRoomId={typeRoom._id}
                         >
-                            Edit
-                        </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </TypeRoomDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

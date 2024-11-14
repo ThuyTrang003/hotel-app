@@ -12,3 +12,14 @@ export const getAllRooms = async (params) => {
         throw error.response.data.error;
     }
 };
+
+export const createRoom = async (payload) => {
+    const url = "/api/rooms";
+    try {
+        const response = await axios.post(url, payload);
+        return response.data;
+    } catch (error) {
+        console.error("Create room failed:", error);
+        throw error.response.data.error;
+    }
+};

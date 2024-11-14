@@ -18,7 +18,7 @@ export default function AuthLayout({
                 router.replace("/"); // Chuyển hướng nếu đã login
             }
         }
-    }, [userAccount]);
+    }, [userAccount, router]);
 
     return (
         <main className="flex h-screen w-screen justify-between bg-white">

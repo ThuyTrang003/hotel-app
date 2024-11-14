@@ -1,9 +1,13 @@
+"use client";
+
 import { roomsColumns } from "./rooms-columns";
 import { Plus, RefreshCcw } from "lucide-react";
+import { useState } from "react";
 
 import { useGetAllRooms } from "@/hooks/rooms-hook/useRooms";
 
 import { DataTable } from "@/components/data-table";
+import ImageUploader from "@/components/image-uploader";
 import TableSkeleton from "@/components/table-skeleton";
 import { Button } from "@/components/ui/button";
 
@@ -15,14 +19,13 @@ export function RoomsTable() {
         error,
         isPending,
     } = useGetAllRooms({});
-    if (isSuccess) {
-        console.log(allRoomsData);
-    } else if (isError) {
+    if (isError) {
         console.log(error);
     }
     if (isPending) {
         return <TableSkeleton />;
     }
+
     return (
         <>
             <div className="flex justify-end space-x-4">
