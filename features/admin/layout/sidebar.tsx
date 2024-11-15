@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useLogout } from "@/hooks/auth-hook/useAuth";
 
 import { useSidebar } from "@/stores/admin/store-sidebar";
+import { useUserAccount } from "@/stores/user-account/store-user-account";
 
 import { AlertDialogSection } from "@/components/alert-dialog-section";
 import {
@@ -85,14 +86,21 @@ const items = [
 ];
 
 export function SidebarAdmin() {
-    const { data: logout } = useLogout();
+    const { mutate: logout } = useLogout();
     const router = useRouter();
     const { focusState } = useSidebar();
+    const { resetUserAccount } = useUserAccount();
     const handleLogout = () => {
-        if (logout) {
-            toast("Logout successfully!");
-            router.push("/");
-        }
+        logout(undefined, {
+            onSuccess: () => {
+                toast("Logout successfully!");
+                router.push("/");
+                resetUserAccount();
+            },
+            onError: () => {
+                toast("Logout failed!");
+            },
+        });
     };
     return (
         <Sidebar>

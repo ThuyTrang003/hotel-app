@@ -1,11 +1,13 @@
 "use client";
 
+import { RoomDialog } from "./room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 
 import { moneyFormatter } from "@/utils/money-formatter";
 
+import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -17,14 +19,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface Room {
+    _id: string;
     roomNumber: string;
-    typeName: string;
+    typeId: {
+        _id: string;
+        typename: string;
+        images: string[];
+    };
     description: string;
-    images: string[];
-    price: number;
+    status: string;
 }
 
-export const columns: ColumnDef<Room>[] = [
+export const roomsColumns: ColumnDef<Room>[] = [
     {
         accessorKey: "roomNumber",
         header: ({ column }) => {
@@ -41,12 +47,10 @@ export const columns: ColumnDef<Room>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("roomNumber")}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue("roomNumber")}</div>,
     },
     {
-        accessorKey: "typeName",
+        accessorKey: "typeId",
         header: ({ column }) => {
             return (
                 <Button
@@ -63,52 +67,27 @@ export const columns: ColumnDef<Room>[] = [
         },
         cell: ({ row }) => (
             <div className="text-left capitalize">
-                {row.getValue("typeName")}
+                {row.original.typeId.typename}
             </div>
         ),
     },
     {
         accessorKey: "description",
         header: "Description",
-        cell: ({ row }) => <div>{row.getValue("description")}</div>,
-    },
-    {
-        accessorKey: "images",
-        header: "Image",
-        cell: ({ row }) => {
-            const images = row.getValue("images") as string[];
-            return (
-                <Image
-                    src={images[0]}
-                    alt={`Room ${row.getValue("roomNumber")}`}
-                    className="h-16 w-16 rounded object-cover"
-                    height={100}
-                    width={100}
-                />
-            );
-        },
-    },
-    {
-        accessorKey: "price",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Price
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
         cell: ({ row }) => (
-            <div className="text-left">
-                {moneyFormatter(row.getValue("price"))}
+            <div className="text-left capitalize">
+                {row.getValue("description")}
             </div>
         ),
+    },
+    {
+        accessorKey: "typeId",
+        header: "Image",
+        cell: ({ row }) => {
+            const images = row.original.typeId.images as string[];
+            if (images.length === 0) return <div>No image</div>;
+            return <ImageCarousel images={images} />;
+        },
     },
     {
         id: "actions",
@@ -131,7 +110,20 @@ export const columns: ColumnDef<Room>[] = [
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <RoomDialog
+                            defaultValue={{
+                                typeId: room.typeId._id,
+                                description: room.description,
+                                roomNumber: room.roomNumber,
+                            }}
+                            roomId={room._id}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </RoomDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

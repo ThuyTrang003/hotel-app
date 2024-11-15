@@ -3,13 +3,11 @@ import axios from "@/apis/api-constant";
 export const signin = async (payload) => {
     const url = "/api/auth/login";
     try {
-        const response = await axios.post(url, payload, {
-            // withCredentials: true, // Bật gửi cookie
-        });
-        return response;
+        const response = await axios.post(url, payload);
+        return response.data;
     } catch (error) {
         console.error("Login failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 
@@ -24,16 +22,11 @@ export const signup = async (payload) => {
     };
     const url = "/api/auth/signup";
     try {
-        const response = await axios.post(
-            url,
-            payload,
-            //     , {
-            //     withCredentials: true, // Bật gửi cookie
-            // }
-        );
+        const response = await axios.post(url, payload);
         return response.data;
     } catch (error) {
         console.error("Login failed:", error);
+        throw error.response.data.error.message;
     }
 };
 
@@ -44,7 +37,18 @@ export const logout = async () => {
         return response;
     } catch (error) {
         console.error("Login failed:", error);
-        throw error;
+        throw error.response.data.error;
+    }
+};
+
+export const getIsAuthorization = async () => {
+    const url = "/api/auth/current-user";
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error("Authorization failed:", error);
+        throw error.response.data.error;
     }
 };
 

@@ -46,7 +46,7 @@ export const FavoriteRooms = () => {
             <div className="flex justify-center py-4 text-left">
                 <Link
                     href="/room"
-                    className="bg-amber-1 hover:bg-amber-1/80 inline-block rounded-md px-6 py-3 font-semibold text-white shadow-md transition-colors"
+                    className="inline-block rounded-md bg-amber-1 px-6 py-3 font-semibold text-white shadow-md transition-colors hover:bg-amber-1/80"
                 >
                     View All Rooms
                     <ChevronRight className="ml-2 inline-block h-4 w-4" />
