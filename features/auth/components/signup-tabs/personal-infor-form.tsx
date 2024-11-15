@@ -3,12 +3,12 @@
 import { IInfor } from "../../types/infor-type";
 import { AuthDTO, PersonalInfor } from "../../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useSignup } from "@/hooks/auth-hook/useAuth";
-import { useGetCustomerById } from "@/hooks/customers-hook/useCustomers";
+import { useGetAllCustomers } from "@/hooks/customers-hook/useCustomers";
 
 import { genderType } from "@/types/gender-type";
 
@@ -33,29 +33,31 @@ export function PersonalInforForm({
     signupData,
     setSignupData,
 }: PersonalInforFormProp) {
-    // thay thế bằng customerByEmail
-    // const { data: customerById, isSuccess } = useGetCustomerById(
-    //     signupData?.email,
-    // );
     const [defaultValues, setDefaultValues] = useState({});
-
-    // if (isSuccess) {
-    //     setDefaultValues({
-    //         fullName: customerById.fullName,
-    //         gender: customerById.gender,
-    //         dateOfBirth: customerById.birthDate,
-    //         phoneNumber: customerById.phoneNumber,
-    //     });
-    // }
+    const [phone, setPhone] = useState("");
     const {
         register,
         handleSubmit,
+        setValue,
         control,
         formState: { errors },
     } = useForm<PersonalInfor>({
         resolver: zodResolver(AuthDTO.personalInforSchema),
-        defaultValues,
     });
+
+    // const { data: customerByPhone, isSuccess } = useGetAllCustomers({
+    //     phone: phone,
+    //     page: 1,
+    //     size: 1,
+    // });
+
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         setValue("fullName", customerByPhone.data.fullName);
+    //         setValue("gender", customerByPhone.data.gender);
+    //         setValue("dateOfBirth", customerByPhone.data.birthDate);
+    //     }
+    // }, [customerByPhone]);
 
     const { mutate: signupMutate, isPending } = useSignup();
 
@@ -65,14 +67,26 @@ export function PersonalInforForm({
             onSuccess: () => {
                 toast("Signup successfully!");
             },
-            onError: () => {
-                toast.error("Signup failed!");
+            onError: (message) => {
+                toast.error("Error: " + message);
             },
         });
     });
     return (
         <form onSubmit={onSubmit}>
             <CardContent className="flex flex-col">
+                <div className="space-y-1">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                        {...register("phoneNumber")}
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        onBlur={(e) => setPhone(e.target.value)}
+                    />
+                </div>
+                {errors.phoneNumber && (
+                    <ErrorField>{errors.phoneNumber.message}</ErrorField>
+                )}
                 <div className="space-y-1">
                     <Label htmlFor="fullName">Full Name</Label>
                     <Input
@@ -122,21 +136,9 @@ export function PersonalInforForm({
                 {errors.dateOfBirth && (
                     <ErrorField>{errors.dateOfBirth.message}</ErrorField>
                 )}
-
-                <div className="space-y-1">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                        {...register("phoneNumber")}
-                        type="tel"
-                        placeholder="Enter your phone number"
-                    />
-                </div>
-                {errors.phoneNumber && (
-                    <ErrorField>{errors.phoneNumber.message}</ErrorField>
-                )}
             </CardContent>
             <CardContent className="flex flex-col space-y-4">
-                <Button disabled={isPending}>Sign in</Button>
+                <Button disabled={isPending}>Sign up</Button>
             </CardContent>
         </form>
     );

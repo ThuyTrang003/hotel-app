@@ -34,7 +34,6 @@ export function SigninForm() {
     });
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
         signinMutate(data, {
             onSuccess: (res) => {
                 toast("Signin successfully!");
@@ -45,9 +44,8 @@ export function SigninForm() {
                 }
                 setUserAccount(res.user_id, res.role);
             },
-            onError: (error) => {
-                console.log(error);
-                toast("Signin failed!");
+            onError: (message) => {
+                toast("Signin failed! " + message);
             },
         });
     });

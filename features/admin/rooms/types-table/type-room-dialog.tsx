@@ -1,8 +1,9 @@
 "use client";
 
-import { TypeRoomDTO, createTypeRoom } from "../../utils/room-validate";
+import { TypeRoomDTO, createTypeRoom } from "../../utils/type-room-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -27,7 +28,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 
-interface AddTypeDialogProps {
+interface TypeDialogProps {
     children: React.ReactNode;
     typeRoomId?: string;
     defaultValue?: {
@@ -43,7 +44,9 @@ export function TypeRoomDialog({
     children,
     typeRoomId,
     defaultValue,
-}: AddTypeDialogProps) {
+}: TypeDialogProps) {
+    const queryClient = useQueryClient();
+
     const { mutate: createTypeRoom } = useCreateTypeRoom();
     const { mutate: updateTypeRoom } = useUpdateTypeRoom();
     const [open, setOpen] = useState(false);
@@ -62,7 +65,6 @@ export function TypeRoomDialog({
     const onSubmit = handleSubmit((data) => {
         console.log(data);
         const formData = new FormData();
-
         formData.append("description", data.description);
         formData.append("typename", data.typename);
         formData.append("limit", String(data.limit));
@@ -76,6 +78,9 @@ export function TypeRoomDialog({
             createTypeRoom(formData, {
                 onSuccess: (resp) => {
                     toast.success("Add type room success!");
+                    queryClient.invalidateQueries({
+                        queryKey: ["getAllTypeRooms"],
+                    });
                     console.log(resp);
                     setOpen(false);
                     setImages([]);
@@ -90,6 +95,9 @@ export function TypeRoomDialog({
                 {
                     onSuccess: (resp) => {
                         toast.success("Update type room success!");
+                        queryClient.invalidateQueries({
+                            queryKey: ["getAllTypeRooms"],
+                        });
                         setOpen(false);
                         setImages([]);
                     },
@@ -123,7 +131,9 @@ export function TypeRoomDialog({
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[520px]">
                 <DialogHeader>
-                    <DialogTitle>Add type room</DialogTitle>
+                    <DialogTitle>
+                        {isCreate ? "Add" : "Update"} type room
+                    </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={onSubmit}>
                     <ScrollArea className="h-[calc(100vh-12rem)] px-4">
@@ -153,8 +163,6 @@ export function TypeRoomDialog({
                                 </Label>
                                 <div className="col-span-3">
                                     <Textarea {...register("description")} />
-
-                                    {/* <Input {...register("description")} /> */}
                                     {errors.description && (
                                         <ErrorField>
                                             {errors.description.message}

@@ -19,11 +19,12 @@ import {
 
 interface Customer {
     id: string;
-    phoneNumber: string;
     email: string;
     fullName: string;
     gender: string;
     birthDate: string;
+    phoneNumber: string;
+    role: string;
     point: number;
     isVerified: boolean;
 }
@@ -31,20 +32,7 @@ interface Customer {
 export const customersColumns: ColumnDef<Customer>[] = [
     {
         accessorKey: "phoneNumber",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Phone Number
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Phone Number",
         cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
     },
     {
@@ -87,20 +75,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
     },
     {
         accessorKey: "birthDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Birth date
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Birth date",
         cell: ({ row }) => (
             <div className="text-left">
                 {dateFormatter(row.getValue("birthDate"))}

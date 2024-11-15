@@ -1,33 +1,49 @@
+"use client";
+
 import { customersColumns } from "./customers-columns";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 import { useGetAllCustomers } from "@/hooks/customers-hook/useCustomers";
 
-import { DataTable } from "@/components/data-table";
+import { DataTablePagination } from "@/components/data-table-pagination";
 import TableSkeleton from "@/components/table-skeleton";
+import { Button } from "@/components/ui/button";
 
 export function CustomersTable() {
+    const [pageSize, setPageSize] = useState(10);
+    const [pageNumber, setPageNumber] = useState(1);
+
     const {
         data: allCustomersData,
         isSuccess,
         isError,
         error,
         isPending,
-    } = useGetAllCustomers({});
-    if (isSuccess) {
-        console.log(allCustomersData);
-    } else if (isError) {
+    } = useGetAllCustomers({ page: pageNumber, size: pageSize });
+    if (isError) {
         console.log(error);
     }
     if (isPending) {
         return <TableSkeleton />;
     }
+
     return (
         <>
+            <div className="flex justify-end space-x-4">
+                <Button variant="secondary">
+                    <Plus size={20} strokeWidth={1.75} /> Add
+                </Button>
+            </div>
             {allCustomersData && (
-                <DataTable
+                <DataTablePagination
                     columns={customersColumns}
-                    data={allCustomersData}
-                    pageSizeValue={7}
+                    data={allCustomersData.data}
+                    totalPages={allCustomersData.totalCount}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
                 />
             )}
         </>

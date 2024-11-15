@@ -5,19 +5,21 @@ import { useState } from "react";
 
 import { useGetAllTypeRooms } from "@/hooks/rooms-hook/useTypeRooms";
 
-import { DataTable } from "@/components/data-table";
-import ImageUploader from "@/components/image-uploader";
+import { DataTablePagination } from "@/components/data-table-pagination";
 import TableSkeleton from "@/components/table-skeleton";
 import { Button } from "@/components/ui/button";
 
 export function TypeRoomsTable() {
+    const [pageSize, setPageSize] = useState(10);
+    const [pageNumber, setPageNumber] = useState(1);
+
     const {
         data: allTypeRoomsData,
         isSuccess,
         isError,
         error,
         isPending,
-    } = useGetAllTypeRooms();
+    } = useGetAllTypeRooms({ size: pageSize, page: pageNumber });
     if (isError) {
         console.log(error);
     }
@@ -40,10 +42,14 @@ export function TypeRoomsTable() {
                 </Button>
             </div>
             {allTypeRoomsData && (
-                <DataTable
+                <DataTablePagination
                     columns={TypeRoomscolumns}
-                    data={allTypeRoomsData}
-                    pageSizeValue={4}
+                    data={allTypeRoomsData.data}
+                    totalPages={allTypeRoomsData.totalCount}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
                 />
             )}
         </>

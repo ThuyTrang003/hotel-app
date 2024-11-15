@@ -14,7 +14,7 @@ export function SignupTabs() {
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 bg-black/10">
+            <TabsList className="grid w-full grid-cols-2 bg-amber-1/10">
                 <TabsTrigger value="account">Account</TabsTrigger>
                 <TabsTrigger disabled value="personal">
                     Personal Info

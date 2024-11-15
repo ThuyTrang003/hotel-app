@@ -7,7 +7,7 @@ export const signin = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Login failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 
@@ -26,7 +26,7 @@ export const signup = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Login failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 

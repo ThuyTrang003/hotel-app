@@ -1,5 +1,6 @@
 "use client";
 
+import { RoomDialog } from "./room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
@@ -26,7 +27,6 @@ interface Room {
         images: string[];
     };
     description: string;
-    price: number;
     status: string;
 }
 
@@ -90,28 +90,6 @@ export const roomsColumns: ColumnDef<Room>[] = [
         },
     },
     {
-        accessorKey: "price",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Price
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => (
-            <div className="text-left">
-                {moneyFormatter(row.getValue("price"))}
-            </div>
-        ),
-    },
-    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -132,7 +110,20 @@ export const roomsColumns: ColumnDef<Room>[] = [
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <RoomDialog
+                            defaultValue={{
+                                typeId: room.typeId._id,
+                                description: room.description,
+                                roomNumber: room.roomNumber,
+                            }}
+                            roomId={room._id}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </RoomDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

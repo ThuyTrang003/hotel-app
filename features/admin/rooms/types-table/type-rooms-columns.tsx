@@ -1,5 +1,6 @@
 "use client";
 
+import { RoomDialog } from "../rooms-table/room-dialog";
 import { TypeRoomDialog } from "./type-room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
@@ -179,6 +180,20 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
+                        <RoomDialog
+                            defaultValue={{
+                                typeId: typeRoom._id,
+                                description: "",
+                                roomNumber: "",
+                            }}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Add room
+                            </DropdownMenuItem>
+                        </RoomDialog>
+
                         <TypeRoomDialog
                             defaultValue={{
                                 description: typeRoom.description,
