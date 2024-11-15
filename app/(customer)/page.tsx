@@ -13,13 +13,14 @@ import Hero from "@/features/home/components/hero";
 
 export default function Home() {
     const { mutate: isAuthorization } = useGetIsAuthorization();
-    const { resetUserAccount } = useUserAccount();
+    const { resetUserAccount, setUserAccount } = useUserAccount();
 
     //kiểm tra trong t/h hết access token
     useEffect(() => {
         isAuthorization(undefined, {
-            onSuccess: () => {
+            onSuccess: (res) => {
                 toast.success("Authorized");
+                setUserAccount(res.user_id, res.role);
                 //UI cho user đã login
             },
             onError: () => {

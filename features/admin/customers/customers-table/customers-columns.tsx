@@ -1,5 +1,6 @@
 "use client";
 
+import { CustomerDialog } from "../customer-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -21,7 +22,7 @@ interface Customer {
     id: string;
     email: string;
     fullName: string;
-    gender: string;
+    gender: "Male" | "Female";
     birthDate: string;
     phoneNumber: string;
     role: string;
@@ -141,7 +142,21 @@ export const customersColumns: ColumnDef<Customer>[] = [
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <CustomerDialog
+                            defaultValue={{
+                                phoneNumber: customer.phoneNumber,
+                                fullname: customer.fullName,
+                                gender: customer.gender,
+                                birthDate: customer.birthDate,
+                            }}
+                            customerId={customer.id}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </CustomerDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

@@ -35,6 +35,6 @@ export const updateTypeRoom = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Update type room failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };

@@ -27,3 +27,14 @@ export const getCustomerById = async (id) => {
         throw error.response.data.error;
     }
 };
+
+export const updateCustomer = async (payload) => {
+    const url = `/api/customers/${payload.id}`;
+    try {
+        const response = await axios.put(url, payload.data);
+        return response.data;
+    } catch (error) {
+        console.error("Update customer failed:", error);
+        throw error.response.data.error.message;
+    }
+};

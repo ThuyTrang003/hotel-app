@@ -1,5 +1,6 @@
 "use client";
 
+import { UpdateStaffDialog } from "../update-staff-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -33,20 +34,7 @@ interface Staff {
 export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "phoneNumber",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Phone Number
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Phone Number",
         cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
     },
     {
@@ -71,20 +59,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     },
     {
         accessorKey: "email",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Email
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Email",
         cell: ({ row }) => (
             <div className="text-left">{row.getValue("email")}</div>
         ),
@@ -109,20 +84,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     },
     {
         accessorKey: "birthDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Birth date
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Birth date",
         cell: ({ row }) => (
             <div className="text-left">
                 {dateFormatter(row.getValue("birthDate"))}
@@ -169,7 +131,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const customer = row.original;
+            const staff = row.original;
 
             return (
                 <DropdownMenu>
@@ -185,7 +147,18 @@ export const staffsColumns: ColumnDef<Staff>[] = [
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <UpdateStaffDialog
+                            defaultValue={{
+                                salary: staff.salary,
+                            }}
+                            staffId={staff.id}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </UpdateStaffDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

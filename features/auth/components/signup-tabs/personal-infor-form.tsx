@@ -1,7 +1,7 @@
 "use client";
 
+import { PersonalInfor, UserDTO } from "../../../../utils/user-validate";
 import { IInfor } from "../../types/infor-type";
-import { AuthDTO, PersonalInfor } from "../../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,7 +42,7 @@ export function PersonalInforForm({
         control,
         formState: { errors },
     } = useForm<PersonalInfor>({
-        resolver: zodResolver(AuthDTO.personalInforSchema),
+        resolver: zodResolver(UserDTO.personalInforSchema),
     });
 
     // const { data: customerByPhone, isSuccess } = useGetAllCustomers({
@@ -63,7 +63,8 @@ export function PersonalInforForm({
 
     const onSubmit = handleSubmit((data) => {
         setSignupData({ ...signupData, ...data });
-        signupMutate(signupData, {
+        const payload = { ...signupData, role: "Customer" };
+        signupMutate(payload, {
             onSuccess: () => {
                 toast("Signup successfully!");
             },

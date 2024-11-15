@@ -35,6 +35,6 @@ export const updateRoom = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Update room failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };

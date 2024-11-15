@@ -117,13 +117,14 @@ export function TypeRoomDialog({
             setValue("dailyRate", defaultValue.dailyRate);
             setIsCreate(false);
             console.log(defaultValue);
-        } else {
-            setValue("typename", "");
-            setValue("description", "");
-            setValue("limit", 0);
-            setValue("hourlyRate", 0);
-            setValue("dailyRate", 0);
         }
+        // else {
+        //     setValue("typename", "");
+        //     setValue("description", "");
+        //     setValue("limit", 0);
+        //     setValue("hourlyRate", 0);
+        //     setValue("dailyRate", 0);
+        // }
         setOpen(newOpen);
     };
     return (

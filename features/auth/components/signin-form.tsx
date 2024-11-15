@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthDTO, Signin } from "../utils/auth-validate";
+import { Signin, UserDTO } from "../../../utils/user-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ export function SigninForm() {
         handleSubmit,
         formState: { errors },
     } = useForm<Signin>({
-        resolver: zodResolver(AuthDTO.signinSchema),
+        resolver: zodResolver(UserDTO.signinSchema),
     });
 
     const onSubmit = handleSubmit((data) => {

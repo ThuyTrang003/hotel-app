@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Định nghĩa schema cho User, nhiều thông tin khác
 const typeRoomSchema = z.object({
     typename: z.string().min(1, "Value is required"),
     description: z.string().min(1, "Value is required"),
@@ -35,7 +34,6 @@ const typeRoomSchema = z.object({
     roomNumber: z.string().min(1, "Value is required"),
 });
 
-// Định nghĩa AuthDTO với các schema cho đăng nhập và đăng ký
 export class TypeRoomDTO {
     public static createSchema = typeRoomSchema.pick({
         typename: true,

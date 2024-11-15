@@ -19,6 +19,7 @@ export const signup = async (payload) => {
         gender: payload.gender,
         password: payload.password,
         phoneNumber: payload.phoneNumber,
+        role: payload.role,
     };
     const url = "/api/auth/signup";
     try {
