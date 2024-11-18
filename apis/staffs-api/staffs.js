@@ -1,16 +1,14 @@
 import axios from "@/apis/api-constant";
 
+import { metadata } from "@/app/layout";
+
 export const getAllStaffs = async (params) => {
     const url = "/api/staffs";
     try {
         const response = await axios.get(url, {
             params,
         });
-        const totalCount = response.headers.get("X-Total-Count");
-        return {
-            data: response.data,
-            totalCount: totalCount ? parseInt(totalCount, 10) : 0, // đảm bảo totalCount là số
-        };
+        return response.data;
     } catch (error) {
         console.error("Get all staffs failed:", error);
         throw error.response.data.error;

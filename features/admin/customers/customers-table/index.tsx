@@ -43,7 +43,7 @@ export function CustomersTable() {
                 <DataTablePagination
                     columns={customersColumns}
                     data={allCustomersData.data}
-                    totalPages={allCustomersData.totalCount}
+                    totalPages={allCustomersData.metadata.totalPages}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     pageNumber={pageNumber}

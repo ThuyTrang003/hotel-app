@@ -29,7 +29,7 @@ export function StaffsTable() {
         isError,
         error,
         isPending,
-    } = useGetAllStaffs({ page: pageNumber, size: pageSize });
+    } = useGetAllStaffs({ page: pageNumber, size: pageSize, status: true });
     if (isError) {
         console.log(error);
     }
@@ -59,7 +59,7 @@ export function StaffsTable() {
                 <DataTablePagination
                     columns={staffsColumns}
                     data={allStaffsData.data}
-                    totalPages={allStaffsData.totalCount}
+                    totalPages={allStaffsData.metadata.totalPages}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     pageNumber={pageNumber}

@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteStaffDialog } from "../delete-staff-dialog";
 import { UpdateStaffDialog } from "../update-staff-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
@@ -19,7 +20,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Staff {
+export interface Staff {
     id: string;
     phoneNumber: string;
     email: string;
@@ -29,6 +30,7 @@ interface Staff {
     isVerified: boolean;
     role: string;
     salary: number;
+    status: boolean;
 }
 
 export const staffsColumns: ColumnDef<Staff>[] = [
@@ -159,7 +161,14 @@ export const staffsColumns: ColumnDef<Staff>[] = [
                                 Edit
                             </DropdownMenuItem>
                         </UpdateStaffDialog>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+
+                        <DeleteStaffDialog staff={staff}>
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DeleteStaffDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

@@ -6,11 +6,7 @@ export const getAllTypeRooms = async (params) => {
         const response = await axios.get(url, {
             params,
         });
-        const totalCount = response.headers.get("X-Total-Count");
-        return {
-            data: response.data,
-            totalCount: totalCount ? parseInt(totalCount, 10) : 0, // đảm bảo totalCount là số
-        };
+        return response.data;
     } catch (error) {
         console.error("Get all type rooms failed:", error);
         throw error.response.data.error;
