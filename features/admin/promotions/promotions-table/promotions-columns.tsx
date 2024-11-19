@@ -1,5 +1,6 @@
 "use client";
 
+import { DeletePromotionDialog } from "../delete-promotion-dialog";
 import { PromotionDialog } from "../promotion-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
@@ -151,7 +152,16 @@ export const customersColumns: ColumnDef<Customer>[] = [
                                 Edit
                             </DropdownMenuItem>
                         </PromotionDialog>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DeletePromotionDialog
+                            promotionId={promotion._id}
+                            code={promotion.code}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DeletePromotionDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

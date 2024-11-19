@@ -50,7 +50,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(false);
                         }
                     }}
                     className="px-2"
@@ -94,7 +94,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(false);
                         }
                     }}
                     className="px-2"
@@ -121,7 +121,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(true);
                         }
                     }}
                     className="px-2"
@@ -138,27 +138,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
 
     {
         accessorKey: "price",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Daily Rate
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Daily Rate",
         cell: ({ row }) => (
             <div className="text-left">
                 {moneyFormatter(row.original.price?.dailyRate)}
@@ -167,27 +147,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
     },
     {
         accessorKey: "price",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Hourly Rate
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: " Hourly Rate",
         cell: ({ row }) => (
             <div className="text-left">
                 {moneyFormatter(row.original.price?.hourlyRate)}
@@ -246,7 +206,6 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                                 Edit
                             </DropdownMenuItem>
                         </TypeRoomDialog>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

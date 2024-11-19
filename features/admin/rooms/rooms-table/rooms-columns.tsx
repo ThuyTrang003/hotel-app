@@ -1,11 +1,9 @@
 "use client";
 
+import { DeleteRoomDialog } from "./delete-room-dialog";
 import { RoomDialog } from "./room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-
-import { moneyFormatter } from "@/utils/money-formatter";
 
 import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
@@ -138,7 +136,16 @@ export const roomsColumns: ColumnDef<Room>[] = [
                                 Edit
                             </DropdownMenuItem>
                         </RoomDialog>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DeleteRoomDialog
+                            roomId={room._id}
+                            roomNumber={room.roomNumber}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DeleteRoomDialog>{" "}
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
