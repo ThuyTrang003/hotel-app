@@ -1,7 +1,5 @@
 "use client";
 
-// import { RoomDTO, createRoom } from "../../utils/room-validate";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -212,7 +210,7 @@ export function CustomerDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="flex justify-between">
+                    <DialogFooter className="flex justify-between gap-2">
                         <Button
                             type="button"
                             variant="outline"

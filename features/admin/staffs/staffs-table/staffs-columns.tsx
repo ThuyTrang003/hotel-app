@@ -42,15 +42,22 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "fullName",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
-                    Full name
+                    Full Name
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
@@ -69,13 +76,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "gender",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Gender
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -96,13 +110,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "role",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Role
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -114,13 +135,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "salary",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Salary
                     <CaretSortIcon className="ml-2 h-4 w-4" />

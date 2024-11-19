@@ -1,13 +1,12 @@
 "use client";
 
-import { RoomDialog } from "./room-dialog";
+import { PromotionDialog } from "../promotion-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
 
+import { dateFormatter } from "@/utils/date-formatter";
 import { moneyFormatter } from "@/utils/money-formatter";
 
-import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -18,96 +17,115 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Room {
+interface Customer {
     _id: string;
-    roomNumber: string;
-    typeId: {
-        _id: string;
-        typename: string;
-        images: string[];
-    };
+    code: string;
     description: string;
-    status: string;
+    discountPercentage: number;
+    startDate: string;
+    endDate: string;
+    minSpend: number;
+    maxDiscount: number;
+    limitUse: number;
+    userUsedVoucher: string[];
 }
 
-export const roomsColumns: ColumnDef<Room>[] = [
+export const customersColumns: ColumnDef<Customer>[] = [
     {
-        accessorKey: "roomNumber",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Room Number
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => <div>{row.getValue("roomNumber")}</div>,
-    },
-    {
-        accessorKey: "typeId",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Type
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => (
-            <div className="text-left capitalize">
-                {row.original.typeId.typename}
-            </div>
-        ),
+        accessorKey: "code",
+        header: "Code",
+        cell: ({ row }) => <div>{row.getValue("code")}</div>,
     },
     {
         accessorKey: "description",
         header: "Description",
         cell: ({ row }) => (
-            <div className="text-left capitalize">
-                {row.getValue("description")}
+            <div className="text-left">{row.getValue("description")}</div>
+        ),
+    },
+    {
+        accessorKey: "discountPercentage",
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+            return (
+                <Button
+                    variant={isSorted ? "secondary" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting(false);
+                        }
+                    }}
+                    className="px-2"
+                >
+                    Discount (%)
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            );
+        },
+        cell: ({ row }) => <div>{row.getValue("discountPercentage")}%</div>,
+    },
+    {
+        accessorKey: "startDate",
+        header: "Start Date",
+        cell: ({ row }) => (
+            <div className="text-left">
+                {dateFormatter(row.getValue("startDate"))}
             </div>
         ),
     },
     {
-        accessorKey: "typeId",
-        header: "Image",
-        cell: ({ row }) => {
-            const images = row.original.typeId.images as string[];
-            if (images.length === 0) return <div>No image</div>;
-            return <ImageCarousel images={images} />;
-        },
+        accessorKey: "endDate",
+        header: "End Date",
+        cell: ({ row }) => (
+            <div className="text-left">
+                {dateFormatter(row.getValue("endDate"))}
+            </div>
+        ),
     },
+    {
+        accessorKey: "minSpend",
+        header: "Min amount",
+        cell: ({ row }) => (
+            <div className="text-left">
+                {moneyFormatter(row.getValue("minSpend"))}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "maxDiscount",
+        header: "Max Discount",
+        cell: ({ row }) => (
+            <div className="text-left">
+                {moneyFormatter(row.getValue("maxDiscount"))}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "limitUse",
+        header: "Limit Use",
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("limitUse")}</div>
+        ),
+    },
+    {
+        accessorKey: "userUsedVoucher",
+        header: "Quantity Used",
+        cell: ({ row }) => (
+            <div className="text-left">
+                {row.original.userUsedVoucher.length}
+            </div>
+        ),
+    },
+
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const room = row.original;
+            const promotion = row.original;
 
             return (
                 <DropdownMenu>
@@ -122,22 +140,17 @@ export const roomsColumns: ColumnDef<Room>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuItem>Book room</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <RoomDialog
-                            defaultValue={{
-                                typeId: room.typeId._id,
-                                description: room.description,
-                                roomNumber: room.roomNumber,
-                            }}
-                            roomId={room._id}
+                        <PromotionDialog
+                            defaultValue={promotion}
+                            promotionId={promotion._id}
                         >
                             <DropdownMenuItem
                                 onSelect={(e) => e.preventDefault()}
                             >
                                 Edit
                             </DropdownMenuItem>
-                        </RoomDialog>
+                        </PromotionDialog>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

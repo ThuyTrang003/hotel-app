@@ -151,7 +151,7 @@ export function RoomDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="flex justify-between">
+                    <DialogFooter className="flex justify-between gap-2">
                         <Button
                             type="button"
                             variant="outline"

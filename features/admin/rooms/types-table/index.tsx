@@ -22,7 +22,6 @@ export function TypeRoomsTable() {
     } = useGetAllTypeRooms({ size: pageSize, page: pageNumber });
     if (isError) {
         console.log(error);
-        return <TableSkeleton />;
     }
     if (isPending) {
         return <TableSkeleton />;

@@ -39,15 +39,22 @@ export const customersColumns: ColumnDef<Customer>[] = [
     {
         accessorKey: "fullName",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
-                    Full name
+                    Full Name
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
@@ -59,13 +66,20 @@ export const customersColumns: ColumnDef<Customer>[] = [
     {
         accessorKey: "gender",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Gender
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -86,13 +100,20 @@ export const customersColumns: ColumnDef<Customer>[] = [
     {
         accessorKey: "role",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Type
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -104,13 +125,20 @@ export const customersColumns: ColumnDef<Customer>[] = [
     {
         accessorKey: "point",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Point
                     <CaretSortIcon className="ml-2 h-4 w-4" />

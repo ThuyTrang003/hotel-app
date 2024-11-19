@@ -5,10 +5,11 @@ import { z } from "zod";
 const staffSchema = z.object({
     salary: z
         .union([z.string(), z.number()])
-        .transform((val) => parseFloat(String(val))) // Chuyển đổi chuỗi thành số
+        .transform((val) => String(val).trim()) // Chuyển đổi chuỗi thành số
         .refine((val) => /^[0-9]+(\.[0-9]+)?$/.test(String(val)), {
             message: "Value must be a valid number",
         })
+        .transform((val) => parseFloat(val))
         .refine((val) => !isNaN(val), { message: "Value must be a number" }) // Kiểm tra nếu giá trị là một số hợp lệ
         .refine((val) => val > 0, { message: "Value must be greater than 0" }),
 });

@@ -34,7 +34,7 @@ export const createPromotion = async (payload) => {
     }
 };
 
-export const updatePromotion = async (payload) => {
+export const updatePromotionById = async (payload) => {
     const url = `/api/vouchers/${payload.id}`;
     try {
         const response = await axios.put(url, payload.data);
@@ -42,5 +42,16 @@ export const updatePromotion = async (payload) => {
     } catch (error) {
         console.error("Update promotion failed:", error);
         throw error.response.data.error.message;
+    }
+};
+
+export const deletePromotionById = async (id) => {
+    const url = `/api/vouchers/${id}`;
+    try {
+        const response = await axios.delete(url);
+        return response.data;
+    } catch (error) {
+        console.error("Delete promotion by id failed:", error);
+        throw error.response.data.error;
     }
 };
