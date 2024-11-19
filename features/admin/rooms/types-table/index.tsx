@@ -45,7 +45,7 @@ export function TypeRoomsTable() {
                 <DataTablePagination
                     columns={TypeRoomscolumns}
                     data={allTypeRoomsData.data}
-                    totalPages={allTypeRoomsData.totalCount}
+                    totalPages={allTypeRoomsData.metadata.totalPages}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     pageNumber={pageNumber}

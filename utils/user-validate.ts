@@ -39,7 +39,7 @@ const UserSchema = z.object({
 });
 
 // Định nghĩa AuthDTO với các schema cho đăng nhập và đăng ký
-export class AuthDTO {
+export class UserDTO {
     public static signinSchema = UserSchema.pick({
         email: true,
         password: true,
@@ -65,13 +65,8 @@ export class AuthDTO {
         gender: true,
         dateOfBirth: true,
     });
-
-    public static fullNameSchema = UserSchema.pick({
-        fullName: true,
-    });
 }
 
-export type Signin = z.infer<typeof AuthDTO.signinSchema>;
-export type AccountInfor = z.infer<typeof AuthDTO.accountInforSchema>;
-export type PersonalInfor = z.infer<typeof AuthDTO.personalInforSchema>;
-export type FullName = z.infer<typeof AuthDTO.fullNameSchema>;
+export type Signin = z.infer<typeof UserDTO.signinSchema>;
+export type AccountInfor = z.infer<typeof UserDTO.accountInforSchema>;
+export type PersonalInfor = z.infer<typeof UserDTO.personalInforSchema>;

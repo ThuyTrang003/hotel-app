@@ -3,6 +3,13 @@
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "./ui/select";
+import {
     ColumnDef,
     ColumnFiltersState,
     SortingState,
@@ -28,20 +35,19 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     isHeader?: boolean;
-    pageSizeValue?: number;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     isHeader = true,
-    pageSizeValue = 10,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
     const [globalFilter, setGlobalFilter] = useState("");
+    const [pageSize, setPageSize] = useState(10);
 
     const table = useReactTable({
         data,
@@ -49,7 +55,6 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         //pagination
         getPaginationRowModel: getPaginationRowModel(),
-        initialState: { pagination: { pageSize: pageSizeValue } },
         //sorting
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
@@ -70,6 +75,10 @@ export function DataTable<TData, TValue>({
             sorting,
             columnFilters,
             globalFilter,
+            pagination: {
+                pageSize: pageSize,
+                pageIndex: 0,
+            },
         },
     });
 
@@ -151,7 +160,25 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-between space-x-2 py-4">
+                <Select
+                    value={pageSize.toString()}
+                    onValueChange={(value) => {
+                        setPageSize(Number(value));
+                        table.setPageSize(Number(value));
+                    }}
+                >
+                    <SelectTrigger className="w-[120px]">
+                        <SelectValue placeholder="Select page size" />
+                    </SelectTrigger>
+                    <SelectContent className="min-w-[120px]">
+                        {[10, 20, 30, 40, 50].map((size) => (
+                            <SelectItem key={size} value={size.toString()}>
+                                {size} rows
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
                 <div className="space-x-2">
                     <Button
                         variant="outline"

@@ -193,7 +193,7 @@ export function DataTablePagination<TData, TValue>({
                         <SelectTrigger className="h-8 w-[70px]">
                             <SelectValue placeholder={pagination.pageSize} />
                         </SelectTrigger>
-                        <SelectContent side="top">
+                        <SelectContent side="top" className="min-w-[70px]">
                             {[5, 10, 20, 30, 40, 50].map((pageSize) => (
                                 <SelectItem
                                     key={pageSize}

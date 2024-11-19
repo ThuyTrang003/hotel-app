@@ -32,7 +32,6 @@ export function RoomsTable() {
     if (isPending) {
         return <TableSkeleton />;
     }
-
     return (
         <>
             <div className="flex justify-end space-x-4">
@@ -45,7 +44,7 @@ export function RoomsTable() {
                 <DataTablePagination
                     columns={roomsColumns}
                     data={allRoomsData.data}
-                    totalPages={allRoomsData.totalCount}
+                    totalPages={allRoomsData.metadata.totalPages}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     pageNumber={pageNumber}

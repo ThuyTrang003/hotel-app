@@ -1,5 +1,7 @@
 "use client";
 
+import { DeleteStaffDialog } from "../delete-staff-dialog";
+import { UpdateStaffDialog } from "../update-staff-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -18,7 +20,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Staff {
+export interface Staff {
     id: string;
     phoneNumber: string;
     email: string;
@@ -28,39 +30,34 @@ interface Staff {
     isVerified: boolean;
     role: string;
     salary: number;
+    status: boolean;
 }
 
 export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "phoneNumber",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Phone Number
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Phone Number",
         cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
     },
     {
         accessorKey: "fullName",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
-                    Full name
+                    Full Name
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             );
@@ -71,20 +68,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     },
     {
         accessorKey: "email",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Email
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Email",
         cell: ({ row }) => (
             <div className="text-left">{row.getValue("email")}</div>
         ),
@@ -92,13 +76,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "gender",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Gender
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -109,20 +100,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     },
     {
         accessorKey: "birthDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
-                >
-                    Birth date
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Birth date",
         cell: ({ row }) => (
             <div className="text-left">
                 {dateFormatter(row.getValue("birthDate"))}
@@ -132,13 +110,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "role",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Role
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -150,13 +135,20 @@ export const staffsColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: "salary",
         header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
                 <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                    className="px-0"
+                    variant={isSorted ? "outline" : "ghost"}
+                    onClick={() => {
+                        // Nếu cột đang được sort, thì tắt sort
+                        if (isSorted) {
+                            column.clearSorting();
+                        } else {
+                            // Nếu không, thì bật sort theo chiều tăng dần
+                            column.toggleSorting();
+                        }
+                    }}
+                    className="px-2"
                 >
                     Salary
                     <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -169,7 +161,7 @@ export const staffsColumns: ColumnDef<Staff>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const customer = row.original;
+            const staff = row.original;
 
             return (
                 <DropdownMenu>
@@ -185,8 +177,26 @@ export const staffsColumns: ColumnDef<Staff>[] = [
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-black/30" />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <UpdateStaffDialog
+                            defaultValue={{
+                                salary: staff.salary,
+                            }}
+                            staffId={staff.id}
+                        >
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Edit
+                            </DropdownMenuItem>
+                        </UpdateStaffDialog>
+
+                        <DeleteStaffDialog staff={staff}>
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                        </DeleteStaffDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

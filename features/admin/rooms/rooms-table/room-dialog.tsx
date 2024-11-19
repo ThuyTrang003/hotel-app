@@ -61,11 +61,11 @@ export function RoomDialog({
         if (isCreate) {
             createRoom(data, {
                 onSuccess: () => {
-                    toast.success("Add type room success!");
+                    toast.success("Add room success!");
                     setOpen(false);
                 },
                 onError: () => {
-                    toast.error("Add type room error!");
+                    toast.error("Error!");
                 },
             });
         } else {
@@ -79,8 +79,8 @@ export function RoomDialog({
                         });
                         setOpen(false);
                     },
-                    onError: () => {
-                        toast.error("Update type room error!");
+                    onError: (message) => {
+                        toast.error("Error: " + message);
                     },
                 },
             );
@@ -151,7 +151,7 @@ export function RoomDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="flex justify-between">
+                    <DialogFooter className="flex justify-between gap-2">
                         <Button
                             type="button"
                             variant="outline"

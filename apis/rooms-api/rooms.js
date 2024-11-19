@@ -6,11 +6,7 @@ export const getAllRooms = async (params) => {
         const response = await axios.get(url, {
             params,
         });
-        const totalCount = response.headers.get("X-Total-Count");
-        return {
-            data: response.data,
-            totalCount: totalCount ? parseInt(totalCount, 10) : 0, // đảm bảo totalCount là số
-        };
+        return response.data;
     } catch (error) {
         console.error("Get all rooms failed:", error);
         throw error.response.data.error;
@@ -35,6 +31,6 @@ export const updateRoom = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Update room failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };

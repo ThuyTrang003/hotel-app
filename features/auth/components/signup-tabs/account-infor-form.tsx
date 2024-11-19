@@ -1,7 +1,7 @@
 "use client";
 
+import { AccountInfor, UserDTO } from "../../../../utils/user-validate";
 import { IInfor } from "../../types/infor-type";
-import { AccountInfor, AuthDTO } from "../../utils/auth-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -30,7 +30,7 @@ export function AccountInforForm({
         handleSubmit,
         formState: { errors },
     } = useForm<AccountInfor>({
-        resolver: zodResolver(AuthDTO.accountInforSchema),
+        resolver: zodResolver(UserDTO.accountInforSchema),
     });
 
     const onSubmit = handleSubmit((data) => {

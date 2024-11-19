@@ -1,8 +1,9 @@
 import {
     getAllCustomers,
     getCustomerById,
+    updateCustomer,
 } from "../../apis/customers-api/customers";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetAllCustomers = (params) => {
     return useQuery({
@@ -16,5 +17,11 @@ export const useGetCustomerById = (id) => {
         queryKey: ["getCustomerById", id],
         queryFn: () => getCustomerById(id),
         enabled: !!id, // Chỉ thực thi query khi id tồn tại
+    });
+};
+
+export const useUpdateCustomer = () => {
+    return useMutation({
+        mutationFn: updateCustomer,
     });
 };

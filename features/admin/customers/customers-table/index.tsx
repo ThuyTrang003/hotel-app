@@ -1,5 +1,6 @@
 "use client";
 
+import { CustomerDialog } from "../customer-dialog";
 import { customersColumns } from "./customers-columns";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -21,6 +22,7 @@ export function CustomersTable() {
         error,
         isPending,
     } = useGetAllCustomers({ page: pageNumber, size: pageSize });
+
     if (isError) {
         console.log(error);
     }
@@ -31,15 +33,17 @@ export function CustomersTable() {
     return (
         <>
             <div className="flex justify-end space-x-4">
-                <Button variant="secondary">
-                    <Plus size={20} strokeWidth={1.75} /> Add
-                </Button>
+                <CustomerDialog>
+                    <Button variant="secondary">
+                        <Plus size={20} strokeWidth={1.75} /> Add
+                    </Button>
+                </CustomerDialog>
             </div>
             {allCustomersData && (
                 <DataTablePagination
                     columns={customersColumns}
                     data={allCustomersData.data}
-                    totalPages={allCustomersData.totalCount}
+                    totalPages={allCustomersData.metadata.totalPages}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     pageNumber={pageNumber}
