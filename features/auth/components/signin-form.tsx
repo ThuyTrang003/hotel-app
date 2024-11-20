@@ -40,6 +40,7 @@ export function SigninForm() {
       // Xử lý kết quả phản hồi từ API
       if (response.status === 200) {
         console.log("Login successful:", response.data);
+        localStorage.setItem("Login",response.data.user_id);
         // router.push("/dashboard");
       } else {
         console.error("Login failed:", response.data.message);

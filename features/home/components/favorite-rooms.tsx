@@ -1,48 +1,44 @@
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import React from "react";
 import { ChevronRight } from "lucide-react";
 import { FavoriteRoomItem } from "./favorite-room-item";
-import Link from "next/link";
-import React from "react";
-import { ChevronRight } from "lucide-react";
-import { FavoriteRoomItem } from "./favorite-room-item";
+import RestClient from "@/features/room/utils/api-function";
 
-const FAVORITEROOMS = [
-  {
-    id: "1",
-    title: "Single Room",
-    price: "2400",
-    URL: "/image1.jpg",
-    description: "Đẹp lắm",
-  },
-  {
-    id: "2",
-    title: "Single Room",
-    price: "2400",
-    URL: "/image1.jpg",
-    description: "Đẹp lắm",
-  },
-];
 
 export const FavoriteRooms = () => {
-const FAVORITEROOMS = [
-  {
-    id: "1",
-    title: "Single Room",
-    price: "2400",
-    URL: "/image1.jpg",
-    description: "Đẹp lắm",
-  },
-  {
-    id: "2",
-    title: "Single Room",
-    price: "2400",
-    URL: "/image1.jpg",
-    description: "Đẹp lắm",
-  },
-];
+  const [favoriteRooms, setFavoriteRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export const FavoriteRooms = () => {
+  useEffect(() => {
+    const fetchFavoriteRooms = async () => {
+      try {
+        const client = new RestClient();
+        const response = await client.service("type-rooms/top-rated").find();
+        if (response?.data) {
+          setFavoriteRooms(response.data);
+        } else {
+          console.error("No data received for favorite rooms.");
+        }
+      } catch (error) {
+        console.error("Error fetching favorite rooms:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavoriteRooms();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-500 text-lg">Loading favorite rooms...</p>
+      </div>
+    );
+  }
+
+
   return (
     <section className="py-10 xl:py-18 bg-slate-10 bg-[#F1F0ED]">
       <div className="text-center mx-4">
@@ -54,14 +50,16 @@ export const FavoriteRooms = () => {
         </p>
       </div>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 py-12 mx-25">
-        {FAVORITEROOMS.map((item) => (
+        {favoriteRooms.length > 0 &&  favoriteRooms.map((item) => (
           <FavoriteRoomItem
-            key={item.id}
-            id={item.id}
-            URL={item.URL}
-            title={item.title}
-            price={item.price}
-            description={item.description}
+            key={item.typeRoomId}
+            id={item.typeRoomId}
+            URL={item.images?.[0] || "/default-image.jpg"}
+            title={item.typename}
+            price={item.price?.dailyRate || "N/A"}
+            description={item.description || "No description available"}
+            rating={item.averageScore}
+            totalRatings={item.totalRatings}
           />
         ))}
       </div>
