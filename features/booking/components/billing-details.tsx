@@ -1,348 +1,425 @@
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, FileText, Lock, Plus, Minus } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import QRCode from "react-qr-code";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import RestClient from "@/features/room/utils/api-function";
+import VoucherList from "./voucher-list";
+
+dayjs.extend(customParseFormat);
 
 export default function BillingDetails() {
-  const [couponValidated, setCouponValidated] = useState(false);
-  const [discount, setDiscount] = useState(0);
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [nights, setNights] = useState(0);
-  const [bookingInfo, setBookingInfo] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    guest: "",
-    specialRequests: "",
-  });
-  const handleValidateCoupon = (e) => {
-    e.preventDefault();
-    setDiscount(20);
-    setCouponValidated(true);
-  };
-  const handleProceedToCheckout = () => {
-    const info = {
-      ...bookingInfo,
-      room: "Deluxe Room",
-      branch: "Zante Greece",
-      checkInOut: `${checkIn} → ${checkOut}`,
-      guests: `${bookingInfo.guest} Guest`,
-      totalPrice: couponValidated
-        ? (roomPrice * (1 - discount / 100)).toFixed(2)
-        : roomPrice,
-      depositAmount: couponValidated
-        ? (roomPrice * (1 - discount / 100) * 0.8).toFixed(2)
-        : (roomPrice * 0.8).toFixed(2),
+  const router = useRouter();
+  const containerRef = useRef(null);
+  const searchParams = useSearchParams();
+  const [roomData, setRoomData] = useState(null);
+  const [showRooms, setShowRooms] = useState(false);
+  const [points, setPoints] = useState(0);
+  const [pointsToApply, setPointsToApply] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
+  const toggleShowRooms = () => setShowRooms(!showRooms);
+
+  const [showVoucherList, setShowVoucherList] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [error, setError] = useState(null);
+  const [paidAmount, setPaidAmount] = useState(
+    0
+  );
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setShowVoucherList(false);
+      }
     };
 
-    localStorage.setItem("bookingInfo", JSON.stringify(info));
-    window.location.href = "/checkout";
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowVoucherList]);
+
+  const handleSelectVoucher = (voucher) => {
+    setSelectedVoucher(voucher);
+    setShowVoucherList(false);
+    console.log("Selected Voucher: ", voucher);
   };
+
   useEffect(() => {
-    const inDate = new Date(checkIn);
-    const outDate = new Date(checkOut);
+    const checkIn = searchParams.get("checkIn");
+    const checkOut = searchParams.get("checkOut");
+    const roomDetailsString = searchParams.get("roomDetails");
 
-    const timeDiff = outDate - inDate;
+    const roomDetails = roomDetailsString
+      ? JSON.parse(decodeURIComponent(roomDetailsString))
+      : [];
+    console.log("ROOM DETAILS", roomDetails);
+    setRoomData({
+      checkIn,
+      checkOut,
+      roomDetails,
+    });
+    const fetchCustomerPoints = async () => {
+      const restClient = new RestClient();
+      restClient.service("customers");
+      const userId = localStorage.getItem("Login");
+      const response = await restClient.get(userId);
+      if (response && response.point) {
+        setPoints(response.point);
+      }
+    };
 
-    const diffInDays = timeDiff / (1000 * 60 * 60 * 24);
+    fetchCustomerPoints();
+  }, [searchParams]);
 
-    setNights(diffInDays);
-  }, [checkIn, checkOut]);
-  useEffect(() => {
-    const storedCheckIn = localStorage.getItem("checkIn");
-    const storedCheckOut = localStorage.getItem("checkOut");
+  if (!roomData) return null;
 
-    if (storedCheckIn) setCheckIn(storedCheckIn);
-    if (storedCheckOut) setCheckOut(storedCheckOut);
-  }, []);
-  const roomPrice = 1791;
-  // const totalBeforeDiscount = roomPrice;
-  // const totalAfterDiscount = totalBeforeDiscount * (1 - discount / 100);
+  const daysDifference = dayjs(roomData.checkOut).diff(
+    dayjs(roomData.checkIn),
+    "day"
+  );
+  const totalHoursDifference = dayjs(roomData.checkOut).diff(
+    dayjs(roomData.checkIn),
+    "hour"
+  );
+  const remainingHours = totalHoursDifference - daysDifference * 24;
+
+  const calculateTotalCost = () => {
+    return roomData.roomDetails.reduce((total, room) => {
+      const dailyCost =
+        (room.price.dailyRate || 0) * daysDifference * room.roomCount;
+      const hourlyCost =
+        (room.price.hourlyRate || 0) * remainingHours * room.roomCount;
+      const extraCharge = room.extraCharge;
+      return total + dailyCost + hourlyCost + extraCharge;
+    }, 0);
+  };
+
+  const totalCost = calculateTotalCost();
+  const calculateDiscountedTotal = () => {
+    const discountFromPoints = pointsToApply * 1000;
+
+    let voucherDiscount = 0;
+    if (selectedVoucher) {
+      const discountPercentage = selectedVoucher.discountPercentage / 100;
+      const maxDiscount = selectedVoucher.maxDiscount;
+      const discountByVoucher = totalCost * discountPercentage;
+
+      voucherDiscount = Math.min(maxDiscount, discountByVoucher);
+    }
+
+    const totalDiscount = discountFromPoints + voucherDiscount;
+
+    return totalCost - totalDiscount;
+  };
+  
+
+  const handleBooking = async () => {
+    try {
+      const userId = localStorage.getItem("Login");
+      const bookingData = {
+        userId: userId,
+        typeRooms: roomData.roomDetails.map((room) => ({
+          typeId: room.roomId,
+          numberOfRooms: room.roomCount,
+        })),
+        checkInTime: new Date(roomData.checkIn).toISOString(),
+        checkOutTime: new Date(roomData.checkOut).toISOString(),
+        paidAmount: paidAmount,
+        numberOfGuests: roomData.roomDetails.reduce(
+          (total, room) => total + room.adults,
+          0
+        ),
+        paymentMethod: "Credit Card",
+        redeemedPoint: pointsToApply,
+      };
+  
+      if (selectedVoucher && selectedVoucher.code) {
+        bookingData.voucherCode = selectedVoucher.code;
+      }
+  
+      console.log("Sending booking data:", bookingData);
+  
+      const restClient = new RestClient();
+      restClient.service("bookings");
+      const response = await restClient.create(bookingData);
+      console.log("Response", response);
+  
+      if (response.success === false) {
+        console.error("Booking failed:", response.message || "Unknown error");
+      } else {
+        alert("Your booking has been successfully completed!");
+  
+        
+        const url = new URL(window.location);
+        url.searchParams.delete("checkIn");
+        url.searchParams.delete("checkOut");
+        url.searchParams.delete("roomDetails");
+        window.history.replaceState({}, "", url);
+  
+        router.push("/");
+      }
+    } catch (error) {
+      if (error.errorData) {
+        console.error("Booking failed with details:", error.errorData);
+        setError(error.errorData.error.message);
+      } else {
+        console.error("Error in booking:", error);
+      }
+    }
+  };
+
   return (
-    <div className=" px-24 py-10">
-      <div className="flex justify-between">
-        {/* Left Section: Notification Bar & Billing Form */}
-        <div className="w-3/4">
-          {/* Top Notification Bar */}
-          <div className="bg-blue-500 text-white p-2 px-5 rounded-md mb-8 flex items-center">
-            <svg className="w-6 h-6 mr-2" fill="white" viewBox="0 0 24 24">
-              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-.75 5h1.5v5h-1.5zm.75 9.25a1.25 1.25 0 1 1 1.25-1.25A1.25 1.25 0 0 1 12 16.25z" />
-            </svg>
-            Hey! Use the coupon code{" "}
-            <strong className="ml-1 mr-1">ZANTE20OFF </strong> to get 20% off on
-            your total price!
-          </div>
+    <div className="bg-gray-200 min-h-screen flex flex-col items-center px-4 py-5">
+      <header className="w-full flex items-center justify-center mt-16 px-4">
+        <h1 className="text-xl font-bold text-blue-800">BOOKING INFORMATION</h1>
+        <div className="w-10"></div>
+      </header>
 
-          {/* Billing Form */}
-          <div className="bg-white">
-            <h2 className="text-2xl font-bold text-gray-700 mb-6">
-              Billing Details
-            </h2>
-
-            <form>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.fullName.split(" ")[0] || ""}
-                  onChange={(e) =>
-                    setBookingInfo({
-                      ...bookingInfo,
-                      fullName:
-                        e.target.value +
-                        " " +
-                        bookingInfo.fullName.split(" ")[1],
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.fullName.split(" ")[1] || ""}
-                  onChange={(e) =>
-                    setBookingInfo({
-                      ...bookingInfo,
-                      fullName:
-                        bookingInfo.fullName.split(" ")[0] +
-                        " " +
-                        e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.email}
-                  onChange={(e) =>
-                    setBookingInfo({ ...bookingInfo, email: e.target.value })
-                  }
-                />
-                <div className="flex">
-                  <span className="border p-3 rounded-l-md bg-gray-100 mb-5">
-                    🇻🇳 +84
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Phone"
-                    className="border p-3 rounded-r-md flex-1 mb-5"
-                    value={bookingInfo.phone}
-                    onChange={(e) =>
-                      setBookingInfo({ ...bookingInfo, phone: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.address}
-                  onChange={(e) =>
-                    setBookingInfo({ ...bookingInfo, address: e.target.value })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Guest"
-                  className="border p-3 rounded-md mb-5"
-                  value={bookingInfo.adultCount}
-                  onChange={(e) =>
-                    setBookingInfo({
-                      ...bookingInfo,
-                      adultCount: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              {/* Special Requests */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2 text-gray-500">
-                  Special Requests
-                </h3>
-                <textarea
-                  placeholder="Special Requests"
-                  className="border p-3 rounded-md w-full h-24 mb-5"
-                  value={bookingInfo.specialRequests}
-                  onChange={(e) =>
-                    setBookingInfo({
-                      ...bookingInfo,
-                      specialRequests: e.target.value,
-                    })
-                  }
-                ></textarea>
-              </div>
-
-              <div className="mb-10">
-                <h3 className="text-lg font-semibold mb-2">Arrival Time</h3>
-                <div className="grid grid-cols-4 gap-4">
-                  {[
-                    "10:00 - 11:00",
-                    "12:00 - 13:00",
-                    "13:00 - 14:00",
-                    "17:00 - 18:00",
-                  ].map((time, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center border rounded-lg px-3 py-2"
-                    >
-                      <input
-                        type="radio"
-                        name="arrivalTime"
-                        id={`time-${index}`}
-                        className="mr-2"
-                      />
-                      <label
-                        htmlFor={`time-${index}`}
-                        className="text-gray-700"
-                      >
-                        {time}
-                      </label>
+      <div className="w-full max-w-5xl mt-8 flex flex-col md:flex-row gap-6">
+        {/* Left Column */}
+        <div className="w-full md:w-2/3 flex flex-col gap-4">
+          {/* Booking Policy Section */}
+          <div className="bg-white p-6 rounded-md shadow">
+            <h2 className="text-lg font-semibold mb-4">Booking Policy</h2>
+            {roomData.roomDetails.length > 0 ? (
+              <div className="flex items-start mb-4">
+                <div>
+                  {roomData.roomDetails.map((room, index) => (
+                    <div key={index} className="mb-4">
+                      <div className="flex">
+                        <FileText className="w-5 h-5 text-gray-600 mr-2" />
+                        <p className="font-semibold">Room: {room.typeRoom}</p>
+                      </div>
+                      <p className="text-gray-700 mt-2">
+                        <strong>Cancellation:</strong> If you cancel or no-show,
+                        you will be charged the full deposit amount.
+                      </p>
+                      <p className="text-gray-700 mt-1">
+                        <strong>Payment:</strong> Full payment of the booking
+                        amount is required.
+                      </p>
+                      <p className="text-gray-700 mt-1">Breakfast included</p>
                     </div>
                   ))}
                 </div>
               </div>
+            ) : (
+              <p>You haven't selected a room yet!</p>
+            )}
+          </div>
 
-              {/* Coupon Section */}
-              <div className="mb-10">
-                <h3 className="text-lg font-semibold mb-2">Coupon</h3>
-                {couponValidated ? (
-                  <div className="bg-green-100 p-4 rounded-md text-green-700 flex items-center">
-                    <svg
-                      className="w-6 h-6 mr-2"
-                      fill="green"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-2 13.41l-3.54-3.54L8.83 10l2.83 2.83L17.17 7l1.41 1.41z" />
-                    </svg>
-                    Coupon code ZANTE20OFF applied successfully!
-                  </div>
-                ) : (
-                  <div className="flex">
-                    <input
-                      type="text"
-                      placeholder="Enter coupon code if you have one"
-                      className="border w-9/12 flex items-center pl-4"
-                    />
-                    <button
-                      className="bg-yellow-500 text-white p-3 rounded-md font-semibold ml-20"
-                      onClick={handleValidateCoupon}
-                    >
-                      VALIDATE CODE
-                    </button>
-                  </div>
+          {/* Payment Method Section */}
+          <div className="bg-white p-6 rounded-md shadow">
+            <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
+            <div className="flex items-center mb-4">
+              <Image
+                width={40}
+                height={40}
+                src={"/image2.jpg"}
+                alt="Bank"
+                className="mr-3"
+              />
+              <p>OnePay Vietnam (ATM Card)</p>
+            </div>
+
+            <div className="flex justify-center mb-4">
+              <QRCode value={`Payment: ${paidAmount} VND`} size={128} />
+            </div>
+
+            {/* Input for paidAmount */}
+            <div className="mb-4">
+              <label
+                htmlFor="paidAmount"
+                className="block text-gray-700 text-sm mb-2"
+              >
+                Enter Paid Amount:
+              </label>
+              <input
+                type="text"
+                id="paidAmount"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                value={paidAmount.toLocaleString("vi-VN")}
+                defaultValue={calculateDiscountedTotal() * 0.2}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\./g, "");
+                  const numericValue = parseFloat(rawValue) || 0;
+                  setPaidAmount(numericValue);
+                }}
+                onBlur={() => {
+                  if (paidAmount < calculateDiscountedTotal() * 0.2) {
+                    setPaidAmount(calculateDiscountedTotal() * 0.2);
+                  }
+                }}
+              />
+              {paidAmount !== undefined &&
+                paidAmount < calculateDiscountedTotal() * 0.2 && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Paid amount must be at least{" "}
+                    {calculateDiscountedTotal() * 0.2} VND.
+                  </p>
                 )}
-              </div>
+            </div>
 
-              {/* Terms and Conditions */}
-              <div className="mb-6 flex items-center">
-                <input type="checkbox" id="terms" className="mr-2" />
-                <label htmlFor="terms" className="text-gray-600">
-                  I agree to the{" "}
-                  <span className="text-yellow-500">Terms and Conditions</span>
-                </label>
-              </div>
-            </form>
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mr-2"
+                onChange={(e) => setIsChecked(e.target.checked)}
+              />
+              <label htmlFor="terms" className="text-gray-700 text-sm">
+                Please read and agree to the booking terms by checking the box.
+              </label>
+            </div>
+
+            <button
+              onClick={handleBooking}
+              className={`w-full bg-yellow-500 text-white font-semibold py-3 rounded flex items-center justify-center ${
+                isChecked && paidAmount >= calculateDiscountedTotal() * 0.2
+                  ? "opacity-100"
+                  : "opacity-50 cursor-not-allowed"
+              }`}
+              disabled={
+                !isChecked || paidAmount < calculateDiscountedTotal() * 0.2
+              }
+            >
+              <Lock className="w-5 h-5 mr-2" />
+              BOOK NOW
+            </button>
           </div>
         </div>
 
-        {/* Right Section: Booking Summary */}
-        <div className="w-1/4 bg-white shadow-md rounded-lg p-5 pt-40 relative ml-6 mt-[32px] border h-[650px]">
-          {/* Image */}
-          <div className="absolute top-0 left-0 w-full h-48 rounded-t-lg overflow-hidden -mt-8">
-            <Image
-              src="/image1.jpg" // Ensure this path is correct
-              alt="Room"
-              className="w-full h-full object-cover"
-              width={400} // You can adjust width as needed
-              height={200} // You can adjust height as needed
-            />
-          </div>
-
-          <h2 className="text-xl font-thin text-black-100 mb-6 mt-2">
-            Booking Details
+        {/* Right Column - Booking Summary */}
+        <div className="w-full md:w-1/3 bg-white p-6 rounded-md shadow h-fit">
+          <p>{error}</p>
+          <h2 className="text-lg font-semibold mb-4 border-b-2 py-2">
+            Your Booking Request
           </h2>
-
-          <div className="mb-4 flex justify-between">
-            <p className="font-semibold text-sm text-gray-600">Types</p>
-            <p className="text-[13px] font-normal">Zante Greece</p>
+          <p className="font-semibold">Hotel Zante</p>
+          <p className="text-gray-700 mt-2">
+            Check-in: {dayjs(roomData.checkIn).format("DD/MM/YYYY hh:mm A")}
+          </p>
+          <p className="text-gray-700">
+            Check-out: {dayjs(roomData.checkOut).format("DD/MM/YYYY hh:mm A")}
+          </p>
+          <p className="text-gray-700 mb-4">
+            ({daysDifference} days
+            {remainingHours > 0 ? `, ${remainingHours} hours` : ""}){" "}
+          </p>
+          <hr className="my-4" />
+          <div className="flex items-center justify-between mb-2">
+            <p className="font-semibold">Room Information</p>
+            {roomData.roomDetails.length > 0 && (
+              <button
+                onClick={toggleShowRooms}
+                className="text-blue-500 hover:text-blue-700 focus:outline-none"
+              >
+                {showRooms ? <Minus /> : <Plus />}
+              </button>
+            )}
           </div>
-
-          <div className="mb-4 flex justify-between">
-            <p className="font-semibold text-sm text-gray-600">Check In</p>
-            <p className="text-[13px] font-normal">
-              {new Date(checkIn).toLocaleDateString("vi-VN", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-
-          <div className="mb-4 flex justify-between ">
-            <p className="font-semibold text-sm text-gray-600">Check Out</p>
-            <p className="text-[13px] font-normal">
-              {new Date(checkOut).toLocaleDateString("vi-VN", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-
-          <div className="mb-4 flex justify-between">
-            <p className="font-semibold text-sm text-gray-600">Nights</p>
-            <p className="text-[13px] font-normal">{nights}</p>
-          </div>
-
-          <div className="mb-4 flex justify-between">
-            <p className="font-semibold text-sm text-gray-600">Guests</p>
-            <p className="text-[13px] font-normal">
-              {bookingInfo.guest} Guest
-            </p>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-semibold text-gray-600 mb-2">Price Summary</h3>
-            <div className="mb-4 flex justify-between">
-              <p className="font-semibold text-[15px] text-gray-400">
-                Deluxe Room:
-              </p>
-              <p className="text-[14px] font-normal">€1,791</p>
-            </div>
-            {couponValidated && (
-              <div className="mb-4 flex justify-between text-green-600">
-                <p className="font-semibold text-[15px]">
-                  Discount ZANTE20OFF:
+          {/* Room Information */}
+          {showRooms && roomData.roomDetails.length > 0 ? (
+            roomData.roomDetails.map((room, index) => (
+              <div key={index} className="mt-1">
+                <p className="text-gray-600">Room: {room.typeRoom}</p>
+                <p className="text-gray-600">Room count: {room.roomCount}</p>
+                <p className="text-gray-600">Guests: {room.adults}</p>
+                <p className="text-gray-600">
+                  Room price:
+                  <br /> {room.price.dailyRate.toLocaleString()} VND/night |{" "}
+                  {room.price.hourlyRate.toLocaleString()} VND/hour
                 </p>
-                <p className="text-[14px] font-normal">-20%</p>
+                <p className="text-gray-600">
+                  Extra charge: {room.extraCharge.toLocaleString()} VND
+                </p>
+                {index < roomData.roomDetails.length - 1 && (
+                  <hr className="border-gray-300 mt-3" />
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600"></p>
+          )}
+
+          <hr className="my-4" />
+
+          <div className="flex flex-row justify-between border-b-2 mb-2">
+            <p className="font-semibold text-gray-700 mb-5">Room Price</p>
+            <p className="text-sm font-bold mb-5">
+              {totalCost.toLocaleString()} VND
+            </p>
+          </div>
+
+          <div className="w-full mb-4 relative" ref={containerRef}>
+            <p className="text-sm font-thin">Enter promo code/voucher code</p>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 pr-8"
+                placeholder={
+                  selectedVoucher ? selectedVoucher.code : "Select a voucher"
+                }
+                readOnly
+                onClick={() => setShowVoucherList(!showVoucherList)}
+              />
+              {selectedVoucher && (
+                <button
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-red-500"
+                  onClick={() => handleSelectVoucher(null)}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            {showVoucherList && (
+              <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-md mt-1 max-h-60 overflow-auto z-10">
+                <VoucherList
+                  onSelectVoucher={(voucher) => {
+                    handleSelectVoucher(voucher);
+                    setShowVoucherList(false);
+                  }}
+                  totalAmount={totalCost}
+                />
               </div>
             )}
           </div>
-          <div className="mb-4 flex justify-between bg-[#F5F4FB] py-3">
-            <h3 className="font-semibold text-[15px] text-black-400">
-              Total Price
-            </h3>
-              <span>
-                {couponValidated
-                  ? (roomPrice * (1 - discount / 100)).toFixed(2)
-                  : roomPrice}{" "}
-                $
-              </span>
+
+          <div className="mb-4">
+            <p className="text-sm font-thin">Use your loyalty points</p>
+            <p className="text-gray-600">Available points: {points}</p>
+            <input
+              type="text"
+              max={points}
+              value={pointsToApply}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (
+                  value === "" ||
+                  (/^\d+$/.test(value) && Number(value) <= points)
+                ) {
+                  setPointsToApply(value);
+                }
+              }}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 mt-2"
+              placeholder="Enter the number of points you want to use"
+            />
+            <p className="text-gray-500 text-sm mt-2">
+              Each point equals a 1000 VND discount.
+            </p>
           </div>
 
-          <button
-            onClick={handleProceedToCheckout}
-            className="w-full bg-yellow-500 text-white py-3 px-6 rounded-md font-semibold"
-          >
-            PROCEED TO CHECKOUT
-          </button>
+          <div className="flex flex-row justify-between rounded mt-4">
+            <p className="font-semibold">Total Price:</p>
+            <p className="text-lg font-bold text-red-500">
+              {calculateDiscountedTotal().toLocaleString()} VND
+            </p>
+          </div>
         </div>
       </div>
     </div>

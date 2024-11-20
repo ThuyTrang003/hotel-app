@@ -5,11 +5,11 @@ import { useParams } from 'next/navigation';
 
 
 export default function RoomDetail() {
-  const { id } = useParams(); // Lấy id từ URL params
+  const { id } = useParams();
   
   return (
     <div className="">
-      <CarouselImage/>
+      <CarouselImage roomId={id}/>
       <RoomInfo roomId={id}/>
     </div>
   );

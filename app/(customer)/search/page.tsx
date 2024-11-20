@@ -1,13 +1,13 @@
 "use client"
 
 import ContentSearch from "@/features/search/components/content-search"
-import Stepper from "@/features/room/components/stepper"
+import SearchBooking from "@/features/room/components/search-booking"
 
 export default function Search(){
     console.log("Rendering Stepper");
     return(
-        <div>
-            <Stepper/>
+        <div className="bg-orange-50">
+            <SearchBooking/>
             <ContentSearch/>
         </div>
     )

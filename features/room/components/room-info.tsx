@@ -1,47 +1,238 @@
-"use client"; // Đảm bảo đây là Client Component
+"use client";
 
 import { useRouter } from "next/navigation";
 import {
-  Martini,
-  Wifi,
-  Utensils,
-  Coffee,
-  Smartphone,
-  Tv,
-  Bath,
-  WashingMachine,
-  AirVent,
   UsersRound,
   CalendarDays,
   BedDouble,
   LandPlot,
   Star,
 } from "lucide-react";
-import Rating from "@mui/material/Rating";
-import Stack from "@mui/material/Stack";
+
+import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Rating from "@/components/ui/rating";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Input } from "@/components/ui/input";
+
+import RoomAvailability from "./room-availability";
+import RestClient from "../utils/api-function";
+import RoomReviews from "./room-reviews";
+
+interface Price {
+  dailyRate: number;
+  hourlyRate: number;
+}
+
+interface RoomTypeData {
+  _id: string;
+  typename: string;
+  price: {
+    dailyRate: number;
+    hourlyRate: number;
+  };
+  limit: number;
+}
+
+interface Rating {
+  bookingId: {
+    userId: string;
+  };
+  reviewerName?: string;
+}
+
+interface OverOccupancyCharge {
+  excessGuests: number;
+  extraCharge: number;
+}
 
 export default function RoomInfo({ roomId }) {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [checkin, setCheckin] = useState("");
-  const [checkout, setCheckout] = useState("");
-  const [guest, setGuest] = useState("");
+  const [roomCount, setRoomCount] = useState(0);
+  const [totalGuests, setTotalGuests] = useState(1);
+  const [overOccupancyCharges, setOverOccupancyCharges] = useState<
+    OverOccupancyCharge[]
+  >([]);
+  const [totalPricePreview, setTotalPricePreview] = useState(0);
+  const [extraChargePreview, setExtraChargePreview] = useState(0);
+  const [roomType, setRoomType] = useState<RoomTypeData | null>(null);
+  const [checkIn, setCheckin] = useState<Date | null>(null);
+  const [checkOut, setCheckout] = useState<Date | null>(null);
+  const [availableRooms, setAvailableRooms] = useState(0);
 
-  const [guests, setGuests] = useState(1);
+  useEffect(() => {
+    const fetchOverOccupancyCharges = async () => {
+      const client = new RestClient();
+      client.service("over-occupancy-charges");
+
+      try {
+        const { data } = await client.find();
+        setOverOccupancyCharges(data);
+      } catch (error) {
+        console.error("Failed to fetch over-occupancy charges:", error);
+      }
+    };
+
+    fetchOverOccupancyCharges();
+  }, []);
+
+  const calculateExtraCharge = (excessGuests) => {
+    const charge = overOccupancyCharges.find(
+      (charge) => charge.excessGuests === excessGuests
+    );
+    return charge ? charge.extraCharge : 0;
+  };
+
+  const handleBooking = () => {
+    if (!checkIn || !checkOut) {
+      alert("Vui lòng chọn ngày nhận phòng và ngày trả phòng");
+      return;
+    }
+
+    if (!roomType) {
+      alert("Dữ liệu loại phòng chưa được tải");
+      return;
+    }
+
+    const charges = calculateRoomCharges();
+    if (!charges) return;
+
+    const { extraCharge, totalPrice } = charges;
+
+    const roomDetails = [
+      {
+        roomId: roomType._id,
+        typeRoom: roomType.typename,
+        roomCount,
+        adults: totalGuests,
+        price: roomType.price,
+        extraCharge,
+        totalPrice,
+      },
+    ];
+
+    const queryString = new URLSearchParams({
+      checkIn: checkIn.toISOString(),
+      checkOut: checkOut.toISOString(),
+      roomDetails: JSON.stringify(roomDetails),
+    }).toString();
+
+    router.push(`/booking?${queryString}`);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Lưu roomId vào sessionStorage
-    sessionStorage.setItem("roomId", roomId);
-    localStorage.setItem("checkIn", checkin);
-    localStorage.setItem("checkOut", checkout);
-
-    // Chuyển hướng đến trang booking
-    router.push("/booking");
+    handleBooking();
   };
 
+  const handleRoomCountChange = (e) => {
+    const count = parseInt(e.target.value, 10);
+    setRoomCount(count);
+  };
+
+  const handleGuestChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value, 10));
+    setTotalGuests(value);
+  };
+
+  useEffect(() => {
+    const fetchRoomType = async () => {
+      setLoading(true);
+      try {
+        const restClient = new RestClient();
+        restClient.service("type-rooms");
+        const roomTypeData = await restClient.get(roomId);
+
+        if (roomTypeData) {
+          setRoomType(roomTypeData);
+          console.log("Room Type Data", roomTypeData);
+        }
+      } catch (error) {
+        console.error("Error fetching room type:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (roomId) {
+      fetchRoomType();
+      console.log("ROOMTYPE", roomType);
+    }
+  }, [roomId]);
+
+  const calculateRoomCharges = (): {
+    extraCharge: number;
+    totalPrice: number;
+  } | null => {
+    if (!checkIn || !checkOut) {
+      alert("Vui lòng chọn cả ngày nhận phòng và ngày trả phòng");
+      return null;
+    }
+  
+    if (!roomType) {
+      alert("Dữ liệu phòng chưa được tải");
+      return null;
+    }
+  
+    const diffInMs = new Date(checkOut) - new Date(checkIn);
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInHours = Math.ceil(
+      (diffInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+  
+    const dailyRate = roomType?.price?.dailyRate || 0;
+    const hourlyRate = roomType?.price?.hourlyRate || 0;
+    const roomLimit = roomType.limit;
+  
+    const dayCost = dailyRate * diffInDays * roomCount;
+    const hourCost = diffInHours > 0 ? hourlyRate * diffInHours * roomCount : 0;
+  
+    const excessGuests = Math.max(totalGuests - roomLimit * roomCount, 0);
+    const extraCharge = calculateExtraCharge(excessGuests) * roomCount;
+  
+    const totalPrice = dayCost + hourCost + extraCharge;
+  
+    setExtraChargePreview(extraCharge);
+    setTotalPricePreview(totalPrice);
+  
+    console.log('Calculated charges:', { extraCharge, totalPrice });
+  
+    return { extraCharge, totalPrice };
+  };
+
+  useEffect(() => {
+    console.log('Values changed:', { checkIn, checkOut, roomCount, totalGuests, roomType });
+    if (checkIn && checkOut && roomType) {
+      const charges = calculateRoomCharges();
+      console.log('Charges:', charges);
+    }
+  }, [checkIn, checkOut, roomCount, totalGuests, roomType]);
+  
+
+  useEffect(() => {
+    const fetchAvailableRooms = async () => {
+      const client = new RestClient();
+
+      try {
+        const response = await client.service(`type-rooms/${roomId}/availableRooms`).find({
+          checkInTime: checkIn.toISOString(),
+          checkOutTime: checkOut.toISOString(),
+        });
+        setAvailableRooms(response.data.availableRoom);
+      } catch (error) {
+        console.error("Failed to fetch available rooms:", error);
+      }
+    };
+
+    if (checkIn && checkOut) {
+      fetchAvailableRooms();
+    }
+  }, [checkIn, checkOut, roomId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!roomType) return <p>No room type data available</p>;
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -50,15 +241,23 @@ export default function RoomInfo({ roomId }) {
           {/* Room Information */}
           <div className="mb-8">
             <div className="flex justify-between">
-              <h1 className="text-4xl font-bold mb-4">Deluxe Room</h1>
-              <p className="text-3xl font-bold">€199 / per night</p>
+              <h1 className="text-4xl font-bold mb-4">{roomType.typename}</h1>
+              <div className="flex space-x-4 mt-3">
+                <p className="text-xl font-bold">
+                  {roomType.price.dailyRate.toLocaleString()} VND / per night
+                </p>
+                <div className="h-7 border-r border-gray-300 mx-4"></div>
+                <p className="text-xl font-bold">
+                  {roomType.price.hourlyRate.toLocaleString()} VND / per hour
+                </p>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="flex items-center space-x-2">
                 <UsersRound className="w-6 h-6" />
                 <div>
                   <p className="font-semibold">Max Guests:</p>
-                  <p className="text-gray-600">5 Adults / 2 Children</p>
+                  <p className="text-gray-600">{roomType.limit} Guest</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -83,156 +282,20 @@ export default function RoomInfo({ roomId }) {
                 </div>
               </div>
             </div>
-            <p className="text-gray-700 leading-relaxed mb-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
-              nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-              erat volutpat...
+            <h2 className="text-2xl font-bold mb-2">Room Description</h2>
+
+            <p className="text-gray-700 leading-relaxed mb-4">
+              {roomType.description}
             </p>
-            <ul className="list-disc ml-5 text-gray-700 space-y-2">
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            </ul>
           </div>
-
           {/* Room Services Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Room Services</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Martini className="w-6 h-6" />
-                <p>Mini Bar</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Bath className="w-6 h-6" />
-                <p>Sauna</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Wifi className="w-6 h-6" />
-                <p>Wi-Fi</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Utensils className="w-6 h-6" />
-                <p>Breakfast</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Coffee className="w-6 h-6" />
-                <p>Coffee Maker</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <WashingMachine className="w-6 h-6" />
-                <p>Hair Dryer</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Smartphone className="w-6 h-6" />
-                <p>Free-to-use Smartphone</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <Tv className="w-6 h-6" />
-                <p>Widescreen TV</p>
-              </div>
-              <div className="flex items-center space-x-2 p-4 border rounded-md">
-                <AirVent className="w-6 h-6" />
-                <p>Air Conditioner</p>
-              </div>
-            </div>
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold mb-6">Room Availability</h2>
+            <RoomAvailability typeId={roomType._id} />
           </div>
-
           {/* Room Reviews Section */}
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Room Reviews</h2>
-            {/* New comment input */}
-            <div className="border p-6 rounded-md mb-5">
-              <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
-              <div className="flex items-center mb-4">
-                <span className="mr-2">Rating:</span>
-                <div className="flex space-x-1">
-                  {/* <Star className="w-6 h-6 cursor-pointer text-gray-300 hover:text-yellow-500" />
-                  <Star className="w-6 h-6 cursor-pointer text-gray-300 hover:text-yellow-500" />
-                  <Star className="w-6 h-6 cursor-pointer text-gray-300 hover:text-yellow-500" />
-                  <Star className="w-6 h-6 cursor-pointer text-gray-300 hover:text-yellow-500" />
-                  <Star className="w-6 h-6 cursor-pointer text-gray-300 hover:text-yellow-500" /> */}
-                  <Stack spacing={1}>
-                    <Rating
-                      name="half-rating"
-                      defaultValue={0}
-                      precision={0.5}
-                    />
-                  </Stack>
-                </div>
-              </div>
-              <textarea
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Write your review here..."
-              ></textarea>
-              <button className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                Submit Review
-              </button>
-            </div>
-            <div className="border p-6 rounded-md mb-4">
-              <div className="flex items-start space-x-4 mb-5">
-                <Image
-                  src="/images/image1.jpg"
-                  alt="Reviewer Avatar"
-                  className="w-16 h-16 rounded-full object-cover"
-                  width={50}
-                  height={50}
-                />
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <Stack spacing={1}>
-                        <Rating
-                          name="half-rating-read"
-                          defaultValue={2.5}
-                          precision={0.5}
-                          readOnly
-                        />
-                      </Stack>
-                    </div>
-                  </div>
-                  <p className="font-semibold text-lg">
-                    Felecia Lawson
-                  </p>
-                  <p className="text-gray-600">
-                    Everything was absolutely great, staff were excellent and
-                    helpful. Room was spacious and clean. Breakfast was great.
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <Image
-                  src="/images/image1.jpg"
-                  alt="Reviewer Avatar"
-                  className="w-16 h-16 rounded-full object-cover"
-                  width={50}
-                  height={50}
-                />
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <Stack spacing={1}>
-                        <Rating
-                          name="half-rating-read"
-                          defaultValue={2.5}
-                          precision={0.5}
-                          readOnly
-                        />
-                      </Stack>
-                    </div>
-                  </div>
-                  <p className="font-semibold text-lg">
-                    Felecia Lawson
-                  </p>
-                  <p className="text-gray-600">
-                    Everything was absolutely great, staff were excellent and
-                    helpful. Room was spacious and clean. Breakfast was great.
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
-                </div>
-              </div>
-            </div>
+            <RoomReviews roomId={roomType._id} />
           </div>
         </div>
 
@@ -242,53 +305,114 @@ export default function RoomInfo({ roomId }) {
             <h2 className="text-xl font-semibold mb-4">Book Your Room</h2>
             <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
               <div>
-                <label htmlFor="checkin" className="block text-gray-600 mb-2">
-                  Check In
-                </label>
-                <input
-                  type="date"
-                  id="checkin"
-                  value={checkin}
-                  onChange={(e) => setCheckin(e.target.value)}
-                  placeholder="Check In"
-                  className="w-full p-2 border rounded-md"
+                <label className="block text-gray-600 mb-2">Check In</label>
+                <DateTimePicker
+                  label="Select Check In Date"
+                  value={checkIn}
+                  onChange={(newValue) => setCheckin(newValue)}
+                  renderInput={(params) => (
+                    <input
+                      {...params}
+                      className="w-full p-2 border rounded-md"
+                    />
+                  )}
                 />
               </div>
               <div>
-                <label htmlFor="checkin" className="block text-gray-600 mb-2">
-                  Check Out
-                </label>
-                <input
-                  type="date"
-                  id="checkout"
-                  value={checkout}
-                  onChange={(e) => setCheckout(e.target.value)}
-                  placeholder="Check Out"
-                  className="w-full p-2 border rounded-md"
+                <label className="block text-gray-600 mb-2">Check Out</label>
+                <DateTimePicker
+                  label="Select Check Out Date"
+                  value={checkOut}
+                  onChange={(newValue) => setCheckout(newValue)}
+                  renderInput={(params) => (
+                    <input
+                      {...params}
+                      className="w-full p-2 border rounded-md"
+                    />
+                  )}
                 />
               </div>
+
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Guests
+                <label className="block text-gray-700 mb-2">
+                  Number of Rooms
                 </label>
-                <input
-                  type="number"
-                  name="guest"
-                  value={guest}
-                  onChange={(e) => setGuest(e.target.value)}
+                {availableRooms > 0 ? (
+                  <select
+                    value={roomCount}
+                    onChange={handleRoomCountChange}
+                    className="border rounded-md px-3 py-2 w-[280px]"
+                  >
+                    {Array.from(
+                      { length: availableRooms + 1 },
+                      (_, index) => index
+                    ).map((count) => (
+                      <option key={count} value={count}>
+                        {count}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="text-red-500">
+                    No rooms available for the selected dates.
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Total Guests</label>
+                <Input
+                  value={totalGuests}
+                  onChange={handleGuestChange}
                   onInput={(e) => {
                     e.target.value = e.target.value.replace(/[^0-9]/g, "");
                   }}
-                  className="border rounded-md px-3 py-2 w-full"
-                  placeholder="Number of Guests"
-                  min="1"
+                  type="number"
+                  className="w-full p-2 border rounded-md"
                 />
               </div>
+              <div className="bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                  Total Price Details
+                </h3>
+
+                <div className="flex justify-between mb-2">
+                  <p className="text-gray-600">Total Days:</p>
+                  <strong className="text-gray-900">
+                    {Math.floor(
+                      (new Date(checkOut) - new Date(checkIn)) /
+                        (1000 * 60 * 60 * 24)
+                    )}
+                  </strong>
+                </div>
+
+                <div className="flex justify-between mb-2">
+                  <p className="text-gray-600">Additional Charge:</p>
+                  <strong className="text-red-500">
+                    {extraChargePreview.toLocaleString()} VND
+                  </strong>
+                </div>
+
+                <div className="flex justify-between">
+                  <p className="text-gray-600 text-base">
+                    Estimated Total Price:
+                  </p>
+                  <strong className="text-green-600">
+                    {totalPricePreview.toLocaleString()} VND
+                  </strong>
+                </div>
+              </div>
+
               <button
                 type="submit"
-                className="bg-yellow-500 text-white py-2 text-center rounded-md hover:bg-yellow-400 transition duration-300"
+                disabled={totalPricePreview <= 0}
+                className={`py-4 text-center rounded-md transition duration-300 text-white ${
+                  totalPricePreview > 0
+                    ? "bg-yellow-500 hover:bg-yellow-400"
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
               >
-                Check Availability
+                Book Room
               </button>
             </form>
           </div>

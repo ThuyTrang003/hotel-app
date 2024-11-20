@@ -33,6 +33,41 @@ export function SigninForm() {
         resolver: zodResolver(UserDTO.signinSchema),
     });
 
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      // Gọi API đăng nhập bằng axios
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+
+      // Xử lý kết quả phản hồi từ API
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
+        localStorage.setItem("Login",response.data.user_id);
+        // router.push("/dashboard");
+      } else {
+        console.error("Login failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Error during login:",
+        error.response?.data || error.message
+      );
+    }
+  });
+
+  return (
+    <form onSubmit={onSubmit}>
+      <CardContent className="flex flex-col">
+        <div className=" space-y-1">
+          <Label htmlFor="email">Email</Label>
+          <Input {...register("email")} placeholder="Enter your mail address" />
+        </div>
+        {errors.email && <ErrorField>{errors.email.message}</ErrorField>}
     const onSubmit = handleSubmit((data) => {
         signinMutate(data, {
             onSuccess: (res) => {

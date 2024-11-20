@@ -8,36 +8,53 @@ interface FavoriteRoomItem {
     title: string;
     price: string;
     description: string;
+    rating: number;
+    totalRatings: number;
 }
+
 export const FavoriteRoomItem = ({
     id,
     URL,
     title,
     price,
     description,
+    rating,
+    totalRatings,
 }: FavoriteRoomItem) => {
     return (
-        <div className="group overflow-hidden rounded-tl-xl rounded-tr-xl border border-slate-200">
-            <Link href={`/room/${id}`} className="relative overflow-hidden">
-                <Image src={URL} height={366} width={640} alt="img" />
-                <span className="bold-16 absolute bottom-0 right-1/2 translate-x-1/2 translate-y-1/2 rounded-full bg-black px-8 py-2 text-white group-hover:bg-amber-1">
-                    $ {price}
+        <div className="group h-full overflow-hidden rounded-xl border border-gray-200 shadow-lg transition-shadow hover:shadow-xl">
+            <Link href={`/room/${id}`} className="relative block">
+                <Image
+                    src={URL}
+                    height={366}
+                    width={640}
+                    alt={title}
+                    className="h-48 w-full rounded-t-xl object-cover"
+                />
+                <span className="absolute bottom-4 left-1/2 -translate-x-1/2 transform rounded-full bg-black bg-opacity-80 px-6 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-[#FF813F]">
+                    {price.toLocaleString()} VND / night
                 </span>
             </Link>
-            <div className="bg-white p-4">
-                <div className="medium-22 capitalize">
-                    <span>{title}</span>
-                </div>
-                <hr className="mt-3" />
-                <p className="my-3 line-clamp-3 overflow-hidden text-ellipsis">
+
+            {/* Nội dung */}
+            <div className="bg-white p-6">
+                <h3 className="text-lg font-semibold capitalize text-gray-800">
+                    {title}
+                </h3>
+                <p className="mt-2 line-clamp-3 text-sm text-gray-600">
                     {description}
                 </p>
-                <hr className="mb-3" />
-                <div className="flex justify-between">
-                    <div className="flex items-center gap-x-2">
+
+                <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-yellow-500" />
-                        <span className="medium-16">(222)</span>
+                        <span className="text-sm font-medium text-gray-700">
+                            {rating.toFixed(1)} / 5
+                        </span>
                     </div>
+                    <span className="text-sm text-gray-500">
+                        ({totalRatings} đánh giá)
+                    </span>
                 </div>
             </div>
         </div>

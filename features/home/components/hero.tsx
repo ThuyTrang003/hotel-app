@@ -1,46 +1,48 @@
 "use client";
 
-import Autocomplete from "@mui/material/Autocomplete";
-import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
-import { DateTimeRangePicker } from "@mui/x-date-pickers-pro/DateTimeRangePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LicenseInfo } from "@mui/x-license";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+// Import Vietnamese locale or your preferred locale
+import DateTimeRangePicker from "@/components/ui/date-time-range-picker";
+import { Input } from "@/components/ui/input";
+
+// Set the Day.js locale globally to 'vi' for DD/MM/YYYY format
+dayjs.locale("vi");
 
 LicenseInfo.setLicenseKey(
     "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y",
 );
 
 const Hero = () => {
-    const [checkIn, setCheckIn] = useState("");
-    const [checkOut, setCheckOut] = useState("");
-    const [roomType, setRoomType] = useState("Single");
-    const [guestCount, setGuestCount] = useState();
-    const [sliderValue, setSliderValue] = useState(500);
+    const [checkInOut, setCheckInOut] = useState({
+        checkIn: new Date(),
+        checkOut: new Date(),
+    });
+    const [guestCount, setGuestCount] = useState(1);
     const router = useRouter();
 
-    // const handleCheckAvailability = () => {
-    //   router.push(
-    //     `/search?checkIn=${checkIn}&checkOut=${checkOut}&roomType=${roomType}`
-    //   );
-    // };
+    const handleDateTimeChange = (checkIn, checkOut) => {
+        setCheckInOut({ checkIn, checkOut });
+    };
 
-    // const valuetext = (value: number) => {
-    //   return ${value}€;
-    // };
-
-    // const marks = [
-    //   { value: 0, label: "0€" },
-    //   { value: 250, label: "250€" },
-    //   { value: 500, label: "500€" },
-    //   { value: 750, label: "750€" },
-    //   { value: 1000, label: "1000€" },
-    // ];
+    const handleCheckAvailability = () => {
+        const { checkIn, checkOut } = checkInOut;
+        if (checkIn && checkOut && guestCount) {
+            router.push(
+                `/search?checkIn=${dayjs(checkIn).format(
+                    "YYYY-MM-DDTHH:mm:ss",
+                )}&checkOut=${dayjs(checkOut).format(
+                    "YYYY-MM-DDTHH:mm:ss",
+                )}&guests=${guestCount}`,
+            );
+        }
+    };
 
     return (
         <section
@@ -65,90 +67,42 @@ const Hero = () => {
                         Discover amazing content with us!
                     </p>
                 </div>
-                <div className="mx-5 mt-10">
-                    <div className="flex flex-row items-start gap-6 rounded-xl bg-white px-32 py-10">
+                <div className="mx-auto mt-10">
+                    <div className="flex flex-row items-start space-x-10 rounded-xl bg-white px-32 py-10">
                         <div className="flex flex-col">
                             <label className="text-lg font-bold">
                                 Check-in and Check-out date
                             </label>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer
-                                    components={["DateTimeRangePicker"]}
-                                >
-                                    <DateTimeRangePicker
-                                        localeText={{
-                                            start: "Check-in",
-                                            end: "Check-out",
-                                        }}
-                                        className="h-full w-full"
-                                        sx={{
-                                            ".MuiFormControl-root": {},
-                                        }}
-                                    />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-lg font-bold">
-                                Room Types
-                            </label>
-                            <Autocomplete
-                                options={[
-                                    {
-                                        label: "The Shawshank Redemption",
-                                        year: 1994,
-                                    },
-                                    { label: "The Godfather", year: 1972 },
-                                ]}
-                                sx={{ width: 210, height: 500 }}
-                                className="mt-2 h-12"
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Type rooms" />
-                                )}
+                            <DateTimeRangePicker
+                                className="mt-2"
+                                checkIn={checkInOut.checkIn}
+                                checkOut={checkInOut.checkOut}
+                                onChange={handleDateTimeChange}
                             />
                         </div>
                         <div className="flex flex-col">
                             <label className="text-lg font-bold">Guests</label>
-                            <TextField
-                                label="Guest"
+                            <Input
+                                type="number"
+                                placeholder="Guest"
                                 value={guestCount}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-
-                                    if (value === "" || Number(value) >= 0) {
-                                        setGuestCount(value);
-                                    }
-                                }}
+                                onChange={(e) => setGuestCount(e.target.value)}
                                 onInput={(e) => {
                                     e.target.value = e.target.value.replace(
                                         /[^0-9]/g,
                                         "",
                                     );
                                 }}
-                                type="number"
-                                variant="outlined"
-                                sx={{ width: "210px" }}
-                                className="h-12"
-                                InputProps={{
-                                    sx: {
-                                        height: "57px",
-                                        padding: "20px",
-                                        marginTop: "8px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                    },
-                                }}
-                                InputLabelProps={{
-                                    sx: {
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        paddingTop: "9px",
-                                    },
-                                }}
+                                customSize="default"
+                                className="mt-2 h-14 w-52"
                             />
                         </div>
+
                         <div className="mt-9 flex items-center">
-                            <button className="rounded-lg bg-[#d9af63] px-8 py-4 text-white transition-colors duration-300 hover:bg-[#c89d55]">
+                            <button
+                                onClick={handleCheckAvailability}
+                                className="rounded-lg bg-[#d9af63] px-9 py-4 text-white transition-colors duration-300 hover:bg-[#c89d55]"
+                            >
                                 CHECK AVAILABILITY
                             </button>
                         </div>
