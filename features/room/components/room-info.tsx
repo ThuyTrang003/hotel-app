@@ -55,6 +55,7 @@ export default function RoomInfo({ roomId }) {
   const [overOccupancyCharges, setOverOccupancyCharges] = useState<
     OverOccupancyCharge[]
   >([]);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [totalPricePreview, setTotalPricePreview] = useState(0);
   const [extraChargePreview, setExtraChargePreview] = useState(0);
   const [roomType, setRoomType] = useState<RoomTypeData | null>(null);
@@ -85,7 +86,40 @@ export default function RoomInfo({ roomId }) {
     return charge ? charge.extraCharge : 0;
   };
 
+  useEffect(() => {
+    const checkUserLogin = async () => {
+      const client = new RestClient();
+      try {
+        const response = await client.service("auth/current-user").find({})
+        console.log("RESSQQWEW", response)
+        if (response) {
+          
+          const userData = await response.data;
+          console.log("USERDAAAAA",userData)
+          if (userData?.user_id) {
+            setIsUserLoggedIn(true);
+          } else {
+            setIsUserLoggedIn(false);
+          }
+        } else {
+          setIsUserLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        setIsUserLoggedIn(false);
+      }
+    };
+
+    checkUserLogin();
+  }, []);
+
+
   const handleBooking = () => {
+    if (!isUserLoggedIn) {
+      router.push("/signin");
+      return;
+    }
+
     if (!checkIn || !checkOut) {
       alert("Vui lòng chọn ngày nhận phòng và ngày trả phòng");
       return;
@@ -264,7 +298,7 @@ export default function RoomInfo({ roomId }) {
                 <CalendarDays className="w-6 h-6" />
                 <div>
                   <p className="font-semibold">Booking Nights:</p>
-                  <p className="text-gray-600">3 Min.</p>
+                  <p className="text-gray-600">No Limit</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">

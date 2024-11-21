@@ -181,7 +181,7 @@ class RestClient {
   async logout(): Promise<{ success: boolean; message?: string }> {
     try {
       const response = await fetch(`${this.baseUrl}/auth/logout`, {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
