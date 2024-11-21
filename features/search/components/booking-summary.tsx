@@ -58,9 +58,9 @@ export default function BookingSummary({
       const client = new RestClient();
       try {
         const response = await client.service("auth/current-user").find({})
-        if (response) {
-          const userData = await response.json();
-          if (userData?.user_id) {
+        if (response.data) {
+          const userData = await response.data;
+          if (userData.user_id) {
             setIsUserLoggedIn(true);
           } else {
             setIsUserLoggedIn(false);
@@ -108,7 +108,7 @@ export default function BookingSummary({
 
   const handleBooking = () => {
     if (!isUserLoggedIn) {
-      router.push("/login");
+      router.push("/signin");
       return;
     }
     const roomDetails = roomsData.map((room: { adults: number; numberOfGuestAllowed: number; roomId: any; typeRoom: any; roomCount: any; price: any; }) => {
