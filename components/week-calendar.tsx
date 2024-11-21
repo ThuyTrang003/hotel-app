@@ -28,10 +28,10 @@ export function WeekCalendar({ setWeekStart, setWeekEnd }: WeekCalendarProps) {
         }); // Bắt đầu từ thứ Hai
         const endOfSelectedWeek = endOfWeek(selectedDate, { weekStartsOn: 1 }); // Kết thúc vào Chủ Nhật
         return {
-            weekStart: format(startOfSelectedWeek, "dd-MM-yyyy", {
+            weekStart: format(startOfSelectedWeek, "yyyy-MM-dd", {
                 locale: vi,
             }),
-            weekEnd: format(endOfSelectedWeek, "dd-MM-yyyy", { locale: vi }),
+            weekEnd: format(endOfSelectedWeek, "yyyy-MM-dd", { locale: vi }),
         };
     };
     useEffect(() => {

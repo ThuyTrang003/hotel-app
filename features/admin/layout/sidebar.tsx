@@ -73,11 +73,6 @@ const items = [
         url: "/admin/reports",
         icon: ChartLine,
     },
-    {
-        title: "Settings",
-        url: "/admin/settings",
-        icon: Settings,
-    },
 ];
 
 export function SidebarAdmin() {

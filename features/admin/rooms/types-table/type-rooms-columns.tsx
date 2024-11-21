@@ -1,5 +1,6 @@
 "use client";
 
+import { AddCartDialog } from "../../bookings/cart/add-cart-dialog";
 import { RoomDialog } from "../rooms-table/room-dialog";
 import { TypeRoomDialog } from "./type-room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -18,7 +19,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface TypeRoom {
+export interface TypeRoom {
     _id: string;
     description: string;
     typename: string;
@@ -132,7 +133,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
             );
         },
         cell: ({ row }) => (
-            <div className="text-left">{row.original.limit}</div>
+            <div className="text-left">{row.original.availableRoom}</div>
         ),
     },
 
@@ -173,7 +174,13 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuItem>Book room</DropdownMenuItem>
+                        <AddCartDialog typeRoom={typeRoom}>
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Add to cart
+                            </DropdownMenuItem>
+                        </AddCartDialog>
                         <DropdownMenuSeparator className="bg-black/30" />
                         <RoomDialog
                             defaultValue={{

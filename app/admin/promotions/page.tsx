@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { useSidebar } from "@/stores/admin/store-sidebar";
 
-import { PromotionsTable } from "@/features/admin/promotions/promotions-table";
+import { PromotionTabs } from "@/features/admin/promotions/promotion-tabs";
 
 export default function PromotionsPage() {
     const { setFocusState } = useSidebar();
@@ -13,7 +13,7 @@ export default function PromotionsPage() {
     }, [setFocusState]);
     return (
         <div className="bg-white p-4">
-            <PromotionsTable />
+            <PromotionTabs />
         </div>
     );
 }
