@@ -2,9 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import RestClient from "@/features/room/utils/api-function";
 
 export default function NavBar() {
   const [active, setActive] = useState(false);
+  const [user, setUser] = useState<{ fullName: string } | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +18,53 @@ export default function NavBar() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUserFromLocalStorage = () => {
+      const userAccount = localStorage.getItem("userAccount");
+      if (userAccount) {
+        const parsedAccount = JSON.parse(userAccount);
+        const userId = parsedAccount.state.userAccount.id;
+        fetchCustomerFullName(userId);
+      }
+    };
+
+    fetchUserFromLocalStorage();
+  }, []);
+
+  const fetchCustomerFullName = async (userId: string) => {
+    const client = new RestClient();
+    try {
+      const customer = await client.service("customers").get(userId);
+
+      if (customer && customer.fullName) {
+        console.log(`Hi, ${customer.fullName}`);
+        setUser({ fullName: customer.fullName });
+      } else {
+        console.error("Customer data is invalid or fullName is missing");
+      }
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+    }
+  };
+  const handleLogout = async (
+    setUser: React.Dispatch<React.SetStateAction<{ fullName: string } | null>>
+  ) => {
+    const restClient = new RestClient();
+    try {
+      const response = await restClient.logout();
+
+      if (response.success) {
+        localStorage.removeItem("userAccount");
+        setUser(null);
+        console.log(response.message || "Logout successful!");
+      } else {
+        console.error(response.message || "Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
     <header
       className={`${
@@ -23,6 +72,7 @@ export default function NavBar() {
       } fixed top-0 left-0 right-0 w-full z-50 transition-all duration-200`}
     >
       <div className="px-5 sm:px-8 md:px-10 lg:px-20 flex justify-between items-center gap-4 sm:gap-8 md:gap-5 lg:gap-5">
+        {/* Logo */}
         <div className="lg:w-20 md:w-20">
           <Link href={"/"}>
             <Image
@@ -36,6 +86,7 @@ export default function NavBar() {
           </Link>
         </div>
 
+        {/* Navigation */}
         <nav className="hidden lm:block">
           <ul className="flex items-center gap-4 sm:gap-6 md:gap-10 lg:gap-12">
             <li>
@@ -73,21 +124,48 @@ export default function NavBar() {
           </ul>
         </nav>
 
+        {/* User Info */}
         <div className="hidden lm:flex items-center gap-4 sm:gap-6">
-          <Link
-            href={"/login"}
-            className="text-[#606060] font-medium hover:text-black transition duration-300"
-          >
-            Log In
-          </Link>
-          <Link
-            href={"/signup"}
-            className="bg-white text-black px-4 py-2 sm:px-6 sm:py-2 md:items-center rounded-full font-medium hover:bg-gray-200 transition duration-300 border border-solid border-[#606060]"
-          >
-            Sign Up
-          </Link>
+          {user ? (
+            <>
+              <Link
+                href={"/update-information"}
+                className="text-[#606060] font-medium"
+              >
+                Hi, {user.fullName}
+              </Link>
+              <Link
+                href={"/history-booking"}
+                className="text-[#606060] font-medium hover:text-black transition duration-300"
+              >
+                History Booking
+              </Link>
+              <button
+                onClick={() => handleLogout(setUser)}
+                className="bg-white text-black px-4 py-2 sm:px-6 sm:py-2 md:items-center rounded-full font-medium hover:bg-gray-200 transition duration-300 border border-solid border-[#606060]"
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href={"/login"}
+                className="text-[#606060] font-medium hover:text-black transition duration-300"
+              >
+                Log In
+              </Link>
+              <Link
+                href={"/signup"}
+                className="bg-white text-black px-4 py-2 sm:px-6 sm:py-2 md:items-center rounded-full font-medium hover:bg-gray-200 transition duration-300 border border-solid border-[#606060]"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
 
+        {/* Mobile Menu */}
         <div className=" lm:hidden flex items-center">
           <button className="text-black" onClick={() => setActive(!active)}>
             <svg
@@ -108,6 +186,7 @@ export default function NavBar() {
         </div>
       </div>
 
+      {/* Mobile Dropdown */}
       {active && (
         <div className=" lm:hidden bg-white shadow-lg">
           <nav>
@@ -142,22 +221,6 @@ export default function NavBar() {
                   className="bg-[#deb666] text-white px-[30px] py-[10px] rounded-md font-bold flex items-center justify-center gap-2 transition-colors duration-300 ease-in-out hover:bg-[#c19a52]"
                 >
                   BOOK ONLINE
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"/login"}
-                  className="text-[#606060] font-medium hover:text-black transition duration-300"
-                >
-                  Log In
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"/signup"}
-                  className="bg-white text-black px-[20px] py-[8px] rounded-full font-medium hover:bg-gray-200 transition duration-300 border border-solid border-[#606060]"
-                >
-                  Sign Up
                 </Link>
               </li>
             </ul>
