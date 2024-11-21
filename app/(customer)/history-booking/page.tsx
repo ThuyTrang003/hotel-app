@@ -40,9 +40,13 @@ export default function HistoryBooking() {
 
   useEffect(() => {
     const fetchBookingsForUser = async () => {
-      const userId = localStorage.getItem("Login");
-      if (userId) {
-        fetchBookings(userId);
+      const userAccount = localStorage.getItem("userAccount");
+      if (userAccount) {
+        const parsedAccount = JSON.parse(userAccount);
+        const userId = parsedAccount.state.userAccount.id;
+        if (userId) {
+          fetchBookings(userId);
+        }
       }
     };
     fetchBookingsForUser();
@@ -138,9 +142,13 @@ export default function HistoryBooking() {
     try {
       await bookingClient.update(bookingId, { currentStatus: "Cancelled" });
       alert("Booking cancelled successfully!");
-      const userId = localStorage.getItem("Login");
-      if (userId) {
-        fetchBookings(userId, metadata.currentPage);
+      const userAccount = localStorage.getItem("userAccount");
+      if (userAccount) {
+        const parsedAccount = JSON.parse(userAccount);
+        const userId = parsedAccount.state.userAccount.id;
+        if (userId) {
+          fetchBookings(userId, metadata.currentPage);
+        }
       }
     } catch (error) {
       console.error("Error cancelling booking:", error);
@@ -162,8 +170,12 @@ export default function HistoryBooking() {
       currentPage: 1,
     }));
 
-    const userId = localStorage.getItem("Login")!;
-    fetchBookings(userId, 1, newSize);
+    const userAccount = localStorage.getItem("userAccount");
+    if (userAccount) {
+      const parsedAccount = JSON.parse(userAccount);
+      const userId = parsedAccount.state.userAccount.id;
+      fetchBookings(userId, 1, newSize);
+    }
   };
 
   return (

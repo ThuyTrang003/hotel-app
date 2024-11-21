@@ -26,6 +26,7 @@ export default function BookingSummary({
   const [showRooms, setShowRooms] = useState(false);
   const [roomsData, setRoomsData] = useState(updatedData);
   const [overOccupancyCharges, setOverOccupancyCharges] = useState([]);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   const daysDifference = dayjs(checkOut).diff(dayjs(checkIn), "day");
   const hoursDifference = dayjs(checkOut).diff(dayjs(checkIn), "hour");
@@ -50,6 +51,30 @@ export default function BookingSummary({
     };
 
     fetchOverOccupancyCharges();
+  }, []);
+
+  useEffect(() => {
+    const checkUserLogin = async () => {
+      const client = new RestClient();
+      try {
+        const response = await client.service("auth/current-user").find({})
+        if (response) {
+          const userData = await response.json();
+          if (userData?.user_id) {
+            setIsUserLoggedIn(true);
+          } else {
+            setIsUserLoggedIn(false);
+          }
+        } else {
+          setIsUserLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        setIsUserLoggedIn(false);
+      }
+    };
+
+    checkUserLogin();
   }, []);
 
   const handleRoomCancel = (index: any) => {
@@ -82,6 +107,10 @@ export default function BookingSummary({
   };
 
   const handleBooking = () => {
+    if (!isUserLoggedIn) {
+      router.push("/login");
+      return;
+    }
     const roomDetails = roomsData.map((room: { adults: number; numberOfGuestAllowed: number; roomId: any; typeRoom: any; roomCount: any; price: any; }) => {
       const excessGuests = Math.max(room.adults - room.numberOfGuestAllowed, 0);
       const extraCharge = calculateExtraCharge(excessGuests);

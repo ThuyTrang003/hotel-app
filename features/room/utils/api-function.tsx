@@ -1,4 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+type UpdateData = {
+  password?: string;
+  fullName?: string;
+  gender?: string;
+  birthDate?: string;
+  phoneNumber?: string;
+  point?: number; 
+  currentStatus?: string;
+  feedback?: string;
+  score?: number;
+  _id?: string;
+  bookingId?: {
+    userId: {
+      _id: string;
+      fullName: string;
+    };
+  };
+  createAt?: string;
+};
+
 class RestClient {
   baseUrl: string;
   path: string;
@@ -102,7 +122,7 @@ class RestClient {
   }
   
 
-  async update(id: string, data: { currentStatus?: string; feedback?: string; score?: number; _id?: string; bookingId?: { userId: { _id: string; fullName: string; }; }; createAt?: string; }) {
+  async update(id: string, data: UpdateData): Promise<{ success: boolean; message?: string; data?: any }> {
     try {
       const response = await fetch(`${this.baseUrl}/${this.path}/${id}`, {
         method: "PUT",
@@ -112,17 +132,26 @@ class RestClient {
         body: JSON.stringify(data),
         credentials: "include",
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Server error:", errorData);
-        throw new Error(`Server responded with status: ${response.status}`);
+        throw new Error(
+          `Server responded with status: ${response.status} - ${response.statusText}`
+        );
       }
-
-      return await response.json();
-    } catch (error) {
+  
+      const responseData = await response.json();
+      return {
+        success: true,
+        data: responseData,
+      };
+    } catch (error: any) {
       console.error(`Error updating data for id ${id}:`, error.message);
-      return { success: false, message: error.message || "Unknown error" };
+      return {
+        success: false,
+        message: error.message || "Unknown error occurred",
+      };
     }
   }
 
@@ -146,6 +175,37 @@ class RestClient {
     } catch (error) {
       console.error(`Error deleting data for id ${id}:`, error.message);
       return { success: false, message: error.message || "Unknown error" };
+    }
+  }
+
+  async logout(): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server error:", errorData);
+        throw new Error(
+          `Server responded with status: ${response.status} - ${response.statusText}`
+        );
+      }
+  
+      return {
+        success: true,
+        message: "Logout successful",
+      };
+    } catch (error: any) {
+      console.error("Error during logout:", error.message);
+      return {
+        success: false,
+        message: error.message || "Unknown error occurred",
+      };
     }
   }
 }

@@ -24,9 +24,7 @@ export default function BillingDetails() {
   const [showVoucherList, setShowVoucherList] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [error, setError] = useState(null);
-  const [paidAmount, setPaidAmount] = useState(
-    0
-  );
+  const [paidAmount, setPaidAmount] = useState(0);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -66,7 +64,12 @@ export default function BillingDetails() {
     const fetchCustomerPoints = async () => {
       const restClient = new RestClient();
       restClient.service("customers");
-      const userId = localStorage.getItem("Login");
+      let userId = null;
+      const userAccount = localStorage.getItem("userAccount");
+      if (userAccount) {
+        const parsedAccount = JSON.parse(userAccount);
+        userId = parsedAccount.state.userAccount.id;
+      }
       const response = await restClient.get(userId);
       if (response && response.point) {
         setPoints(response.point);
@@ -116,11 +119,15 @@ export default function BillingDetails() {
 
     return totalCost - totalDiscount;
   };
-  
 
   const handleBooking = async () => {
     try {
-      const userId = localStorage.getItem("Login");
+      let userId=null;
+      const userAccount = localStorage.getItem("userAccount");
+      if (userAccount) {
+        const parsedAccount = JSON.parse(userAccount);
+        userId = parsedAccount.state.userAccount.id;
+      }
       const bookingData = {
         userId: userId,
         typeRooms: roomData.roomDetails.map((room) => ({
@@ -137,30 +144,29 @@ export default function BillingDetails() {
         paymentMethod: "Credit Card",
         redeemedPoint: pointsToApply,
       };
-  
+
       if (selectedVoucher && selectedVoucher.code) {
         bookingData.voucherCode = selectedVoucher.code;
       }
-  
+
       console.log("Sending booking data:", bookingData);
-  
+
       const restClient = new RestClient();
       restClient.service("bookings");
       const response = await restClient.create(bookingData);
       console.log("Response", response);
-  
+
       if (response.success === false) {
         console.error("Booking failed:", response.message || "Unknown error");
       } else {
         alert("Your booking has been successfully completed!");
-  
-        
+
         const url = new URL(window.location);
         url.searchParams.delete("checkIn");
         url.searchParams.delete("checkOut");
         url.searchParams.delete("roomDetails");
         window.history.replaceState({}, "", url);
-  
+
         router.push("/");
       }
     } catch (error) {
