@@ -74,11 +74,6 @@ const items = [
         icon: ChartLine,
     },
     {
-        title: "Maintenance",
-        url: "/admin/maintenance",
-        icon: Wrench,
-    },
-    {
         title: "Settings",
         url: "/admin/settings",
         icon: Settings,
