@@ -63,7 +63,7 @@ export function PersonalInforForm({
 
     const onSubmit = handleSubmit((data) => {
         setSignupData({ ...signupData, ...data });
-        const payload = { ...signupData, role: "Customer" };
+        const payload = { ...signupData, ...data, role: "Customer" };
         signupMutate(payload, {
             onSuccess: () => {
                 toast(
