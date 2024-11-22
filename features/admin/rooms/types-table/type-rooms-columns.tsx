@@ -8,6 +8,8 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { moneyFormatter } from "@/utils/money-formatter";
 
+import { isAdmin } from "@/features/admin/utils/isAdmin";
+
 import { ImageCarousel } from "@/components/image-carousel";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +37,6 @@ export interface TypeRoom {
         totalRating: number;
     };
 }
-const onViewDetail = () => {};
 
 export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
     {
@@ -181,38 +182,42 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                                 Add to cart
                             </DropdownMenuItem>
                         </AddCartDialog>
-                        <DropdownMenuSeparator className="bg-black/30" />
-                        <RoomDialog
-                            defaultValue={{
-                                typeId: typeRoom._id,
-                                description: "",
-                                roomNumber: "",
-                            }}
-                        >
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                            >
-                                Add room
-                            </DropdownMenuItem>
-                        </RoomDialog>
+                        {isAdmin() && (
+                            <>
+                                <DropdownMenuSeparator className="bg-black/30" />
+                                <RoomDialog
+                                    defaultValue={{
+                                        typeId: typeRoom._id,
+                                        description: "",
+                                        roomNumber: "",
+                                    }}
+                                >
+                                    <DropdownMenuItem
+                                        onSelect={(e) => e.preventDefault()}
+                                    >
+                                        Add room
+                                    </DropdownMenuItem>
+                                </RoomDialog>
 
-                        <TypeRoomDialog
-                            defaultValue={{
-                                description: typeRoom.description,
-                                typename: typeRoom.typename,
-                                limit: typeRoom.limit,
-                                dailyRate: typeRoom.price?.dailyRate,
-                                hourlyRate: typeRoom.price?.hourlyRate,
-                                existingImages: typeRoom.images,
-                            }}
-                            typeRoomId={typeRoom._id}
-                        >
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                            >
-                                Edit
-                            </DropdownMenuItem>
-                        </TypeRoomDialog>
+                                <TypeRoomDialog
+                                    defaultValue={{
+                                        description: typeRoom.description,
+                                        typename: typeRoom.typename,
+                                        limit: typeRoom.limit,
+                                        dailyRate: typeRoom.price?.dailyRate,
+                                        hourlyRate: typeRoom.price?.hourlyRate,
+                                        existingImages: typeRoom.images,
+                                    }}
+                                    typeRoomId={typeRoom._id}
+                                >
+                                    <DropdownMenuItem
+                                        onSelect={(e) => e.preventDefault()}
+                                    >
+                                        Edit
+                                    </DropdownMenuItem>
+                                </TypeRoomDialog>
+                            </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

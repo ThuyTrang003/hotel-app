@@ -8,6 +8,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { dateFormatter } from "@/utils/date-formatter";
 import { moneyFormatter } from "@/utils/money-formatter";
 
+import { isAdmin } from "@/features/admin/utils/isAdmin";
+
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -141,27 +143,31 @@ export const customersColumns: ColumnDef<Customer>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-black/30" />
-                        <PromotionDialog
-                            defaultValue={promotion}
-                            promotionId={promotion._id}
-                        >
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                            >
-                                Edit
-                            </DropdownMenuItem>
-                        </PromotionDialog>
-                        <DeletePromotionDialog
-                            promotionId={promotion._id}
-                            code={promotion.code}
-                        >
-                            <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                            >
-                                Delete
-                            </DropdownMenuItem>
-                        </DeletePromotionDialog>
+                        {isAdmin() && (
+                            <>
+                                <DropdownMenuSeparator className="bg-black/30" />
+                                <PromotionDialog
+                                    defaultValue={promotion}
+                                    promotionId={promotion._id}
+                                >
+                                    <DropdownMenuItem
+                                        onSelect={(e) => e.preventDefault()}
+                                    >
+                                        Edit
+                                    </DropdownMenuItem>
+                                </PromotionDialog>
+                                <DeletePromotionDialog
+                                    promotionId={promotion._id}
+                                    code={promotion.code}
+                                >
+                                    <DropdownMenuItem
+                                        onSelect={(e) => e.preventDefault()}
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DeletePromotionDialog>
+                            </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
