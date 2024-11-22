@@ -201,95 +201,106 @@ export default function HistoryBooking() {
         </select>
       </div>
 
-      <div className="space-y-4">
-        {bookings.map((booking) => {
-          // Kiểm tra nếu ngày hiện tại lớn hơn ngày checkOutTime
-          const isReviewAllowed = new Date() > new Date(booking.checkOutTime);
+      {/* Kiểm tra nếu bookings rỗng */}
+      {bookings.length === 0 ? (
+        <div className="text-center text-gray-600 text-lg">
+          No bookings available.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {bookings.map((booking) => {
+            const isReviewAllowed = new Date() > new Date(booking.checkOutTime);
 
-          return (
-            <div
-              key={booking._id}
-              className="p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm"
-            >
-              <p className="text-sm font-semibold text-gray-600">
-                Booking ID: <span className="font-normal">{booking._id}</span>
-              </p>
-              <p className="text-sm font-semibold text-gray-600">
-                Paid Amount:
-                <span className="font-normal">
-                  {booking.paidAmount.amount.toLocaleString()} VND
-                </span>
-              </p>
-              <p className="text-sm font-semibold text-gray-600">
-                Total Amount:
-                <span className="font-normal">
-                  {booking.totalAmount.toLocaleString()} VND{" "}
-                </span>
-              </p>
-              <p className="text-sm font-semibold text-gray-600">
-                Check-In Time:
-                <span className="font-normal">
-                  {" "}
-                  {format(new Date(booking.checkInTime), "dd/MM/yyyy HH:mm")}
-                </span>
-              </p>
-              <p className="text-sm font-semibold text-gray-600">
-                Check-Out Time:
-                <span className="font-normal">
-                  {format(new Date(booking.checkOutTime), "dd/MM/yyyy HH:mm")}
-                </span>
-              </p>
-              <div className="mt-4">
-                <p className="font-semibold text-gray-600">Rooms:</p>
-                <ul className="ml-4 mt-2 space-y-2">
-                  {booking.roomIds.map((room) => (
-                    <li
-                      key={room.roomNumber}
-                      className="pl-4 border-l-4 border-blue-400"
-                    >
-                      <p className="text-sm text-gray-600">
-                        <strong>Room Number:</strong> {room.roomNumber}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        <strong>Room Type:</strong>{" "}
-                        {room.roomTypeInfo?.typename || "N/A"}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        <strong>Description:</strong>{" "}
-                        {room.roomTypeInfo?.description ||
-                          "No description available"}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex items-center justify-end mt-4 space-x-4">
-                {isReviewAllowed && (
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                    onClick={() => handleReviewClick(booking._id)}
-                  >
-                    Leave a Review
-                  </button>
-                )}
-                <button
-                  className="px-4 py-2 text-red-600 hover:text-red-800"
-                  title="Cancel Booking"
-                  onClick={() => handleCancelBooking(booking._id)}
-                >
-                  <Trash className="w-5 h-5" />
-                </button>
-              </div>
-              {showReviewForm === booking._id && (
-                <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
-                  <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
-                  {/* Form review */}
+            return (
+              <div
+                key={booking._id}
+                className="p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm"
+              >
+                <p className="text-sm font-semibold text-gray-600">
+                  Booking ID: <span className="font-normal">{booking._id}</span>
+                </p>
+                <p className="text-sm font-semibold text-gray-600">
+                  Paid Amount:
+                  <span className="font-normal">
+                    {booking.paidAmount.amount.toLocaleString()} VND
+                  </span>
+                </p>
+                <p className="text-sm font-semibold text-gray-600">
+                  Total Amount:
+                  <span className="font-normal">
+                    {booking.totalAmount.toLocaleString()} VND{" "}
+                  </span>
+                </p>
+                <p className="text-sm font-semibold text-gray-600">
+                  Current Status:
+                  <span className="font-normal">
+                    {booking.currentStatus}
+                  </span>
+                </p>
+                <p className="text-sm font-semibold text-gray-600">
+                  Check-In Time:
+                  <span className="font-normal">
+                    {format(new Date(booking.checkInTime), "dd/MM/yyyy HH:mm")}
+                  </span>
+                </p>
+                <p className="text-sm font-semibold text-gray-600">
+                  Check-Out Time:
+                  <span className="font-normal">
+                    {format(new Date(booking.checkOutTime), "dd/MM/yyyy HH:mm")}
+                  </span>
+                </p>
+                <div className="mt-4">
+                  <p className="font-semibold text-gray-600">Rooms:</p>
+                  <ul className="ml-4 mt-2 space-y-2">
+                    {booking.roomIds.map((room) => (
+                      <li
+                        key={room.roomNumber}
+                        className="pl-4 border-l-4 border-blue-400"
+                      >
+                        <p className="text-sm text-gray-600">
+                          <strong>Room Number:</strong> {room.roomNumber}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <strong>Room Type:</strong>{" "}
+                          {room.roomTypeInfo?.typename || "N/A"}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <strong>Description:</strong>{" "}
+                          {room.roomTypeInfo?.description ||
+                            "No description available"}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                <div className="flex items-center justify-end mt-4 space-x-4">
+                  {isReviewAllowed && (
+                    <button
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                      onClick={() => handleReviewClick(booking._id)}
+                    >
+                      Leave a Review
+                    </button>
+                  )}
+                  <button
+                    className="px-4 py-2 text-red-600 hover:text-red-800"
+                    title="Cancel Booking"
+                    onClick={() => handleCancelBooking(booking._id)}
+                  >
+                    <Trash className="w-5 h-5" />
+                  </button>
+                </div>
+                {showReviewForm === booking._id && (
+                  <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
+                    <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
+                    {/* Form review */}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Phần phân trang */}
       <div className="flex justify-center mt-6">
@@ -303,11 +314,10 @@ export default function HistoryBooking() {
         {[...Array(metadata.totalPages)].map((_, index) => (
           <button
             key={index}
-            className={`px-4 py-2 rounded-md ${
-              metadata.currentPage === index + 1
+            className={`px-4 py-2 rounded-md ${metadata.currentPage === index + 1
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200"
-            }`}
+              }`}
             onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}
