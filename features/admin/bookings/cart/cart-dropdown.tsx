@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ export function CartDropdown({ children }: CartDropdownProps) {
     const handleRemoveItem = (typeId: string) => {
         removeFromCart(typeId);
     };
+    const router = useRouter();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -65,7 +67,11 @@ export function CartDropdown({ children }: CartDropdownProps) {
                     </ScrollArea>
                     <div className="mb-2 space-y-2 pr-4">
                         <div className="flex gap-2">
-                            <Button className="flex-1" variant="secondary">
+                            <Button
+                                className="flex-1"
+                                variant="secondary"
+                                onClick={() => router.push("/admin/dashboard")}
+                            >
                                 Checkout
                             </Button>
                         </div>
