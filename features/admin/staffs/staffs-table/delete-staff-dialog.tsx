@@ -1,4 +1,4 @@
-import { Staff } from "./staffs-table/staffs-columns";
+import { Staff } from "./staffs-columns";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

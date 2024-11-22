@@ -1,5 +1,6 @@
 "use client";
 
+import { AddCartDialog } from "../../bookings/cart/add-cart-dialog";
 import { RoomDialog } from "../rooms-table/room-dialog";
 import { TypeRoomDialog } from "./type-room-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -18,7 +19,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface TypeRoom {
+export interface TypeRoom {
     _id: string;
     description: string;
     typename: string;
@@ -50,7 +51,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(false);
                         }
                     }}
                     className="px-2"
@@ -94,7 +95,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(false);
                         }
                     }}
                     className="px-2"
@@ -121,7 +122,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                             column.clearSorting();
                         } else {
                             // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
+                            column.toggleSorting(true);
                         }
                     }}
                     className="px-2"
@@ -132,33 +133,13 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
             );
         },
         cell: ({ row }) => (
-            <div className="text-left">{row.original.limit}</div>
+            <div className="text-left">{row.original.availableRoom}</div>
         ),
     },
 
     {
         accessorKey: "price",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Daily Rate
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: "Daily Rate",
         cell: ({ row }) => (
             <div className="text-left">
                 {moneyFormatter(row.original.price?.dailyRate)}
@@ -167,27 +148,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
     },
     {
         accessorKey: "price",
-        header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-            return (
-                <Button
-                    variant={isSorted ? "outline" : "ghost"}
-                    onClick={() => {
-                        // Nếu cột đang được sort, thì tắt sort
-                        if (isSorted) {
-                            column.clearSorting();
-                        } else {
-                            // Nếu không, thì bật sort theo chiều tăng dần
-                            column.toggleSorting();
-                        }
-                    }}
-                    className="px-2"
-                >
-                    Hourly Rate
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
+        header: " Hourly Rate",
         cell: ({ row }) => (
             <div className="text-left">
                 {moneyFormatter(row.original.price?.hourlyRate)}
@@ -213,7 +174,13 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                         className="border-black/30"
                     >
                         <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuItem>Book room</DropdownMenuItem>
+                        <AddCartDialog typeRoom={typeRoom}>
+                            <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                            >
+                                Add to cart
+                            </DropdownMenuItem>
+                        </AddCartDialog>
                         <DropdownMenuSeparator className="bg-black/30" />
                         <RoomDialog
                             defaultValue={{
@@ -246,7 +213,6 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                                 Edit
                             </DropdownMenuItem>
                         </TypeRoomDialog>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

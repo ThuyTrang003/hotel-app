@@ -1,7 +1,7 @@
 "use client";
 
-import { DeleteStaffDialog } from "../delete-staff-dialog";
-import { UpdateStaffDialog } from "../update-staff-dialog";
+import { DeleteStaffDialog } from "./delete-staff-dialog";
+import { UpdateStaffDialog } from "./update-staff-dialog";
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 

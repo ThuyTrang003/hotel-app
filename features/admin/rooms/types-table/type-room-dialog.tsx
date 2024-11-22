@@ -216,13 +216,16 @@ export function TypeRoomDialog({
                                     )}
                                 </div>
                             </div>
-                            <ImageUploader
-                                images={images}
-                                setImages={setImages}
-                                existingPreviews={
-                                    defaultValue && defaultValue.existingImages
-                                }
-                            />
+                            {isCreate && (
+                                <ImageUploader
+                                    images={images}
+                                    setImages={setImages}
+                                    existingPreviews={
+                                        defaultValue &&
+                                        defaultValue.existingImages
+                                    }
+                                />
+                            )}
                         </div>
                     </ScrollArea>
 

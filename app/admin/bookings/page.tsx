@@ -4,17 +4,16 @@ import { useEffect } from "react";
 
 import { useSidebar } from "@/stores/admin/store-sidebar";
 
-import { StaffTabs } from "@/features/admin/staffs/staff-tabs";
-import { StaffsTable } from "@/features/admin/staffs/staffs-table";
+import { BookingsTable } from "@/features/admin/bookings";
 
-export default function StaffPage() {
+export default function BookingsPage() {
     const { setFocusState } = useSidebar();
     useEffect(() => {
-        setFocusState("Staff");
+        setFocusState("Bookings");
     }, [setFocusState]);
     return (
         <div className="bg-white p-4">
-            <StaffTabs />
+            <BookingsTable />
         </div>
     );
 }

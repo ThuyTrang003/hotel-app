@@ -85,7 +85,7 @@ export function PromotionDialog({
                 { id: promotionId, data: formatData },
                 {
                     onSuccess: () => {
-                        toast.success("Update customer success!");
+                        toast.success("Update promotion success!");
                         queryClient.invalidateQueries({
                             queryKey: ["getAllPromotions"],
                         });

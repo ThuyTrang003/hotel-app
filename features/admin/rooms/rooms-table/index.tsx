@@ -7,11 +7,8 @@ import { useState } from "react";
 import { useGetAllRooms } from "@/hooks/rooms-hook/useRooms";
 
 import { DataTablePagination } from "@/components/data-table-pagination";
-import { IconInput, RightIcon } from "@/components/icon-input";
-import ImageUploader from "@/components/image-uploader";
 import TableSkeleton from "@/components/table-skeleton";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export function RoomsTable() {
     const [pageSize, setPageSize] = useState(10);
@@ -25,6 +22,7 @@ export function RoomsTable() {
     } = useGetAllRooms({
         page: pageNumber,
         size: pageSize,
+        status: true,
     });
     if (isError) {
         console.log(error);

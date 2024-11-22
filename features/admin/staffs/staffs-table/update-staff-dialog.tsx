@@ -1,6 +1,6 @@
 "use client";
 
-import { StaffDTO, updateStaff } from "../utils/staff-validate";
+import { StaffDTO, updateStaff } from "../../utils/staff-validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
