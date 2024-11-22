@@ -5,6 +5,11 @@ interface CartItem {
     typeId: string;
     numberOfRooms: number;
     typeName: string;
+    price: {
+        hourlyRate: number;
+        dailyRate: number;
+    };
+    limit: number;
 }
 
 interface CartStore {
@@ -13,6 +18,11 @@ interface CartStore {
         typeId: string,
         numberOfRooms: number,
         typeName: string,
+        price: {
+            hourlyRate: number;
+            dailyRate: number;
+        },
+        limit: number,
     ) => void;
     removeFromCart: (typeId: string) => void;
     clearCart: () => void;
@@ -23,7 +33,7 @@ export const useCartStore = create(
             typeRooms: [], // Giỏ hàng ban đầu
 
             // Thêm hoặc cập nhật item trong giỏ hàng
-            addToCart: (typeId, numberOfRooms, typeName) => {
+            addToCart: (typeId, numberOfRooms, typeName, price, limit) => {
                 const { typeRooms } = get();
                 const existingIndex = typeRooms.findIndex(
                     (item) => item.typeId === typeId,
@@ -39,7 +49,7 @@ export const useCartStore = create(
                     set({
                         typeRooms: [
                             ...typeRooms,
-                            { typeId, numberOfRooms, typeName },
+                            { typeId, numberOfRooms, typeName, price, limit },
                         ],
                     });
                 }
