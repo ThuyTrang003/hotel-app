@@ -56,7 +56,6 @@ export function TypeRoomDialog({
         register,
         handleSubmit,
         formState: { errors },
-        getValues,
         setValue,
     } = useForm<createTypeRoom>({
         resolver: zodResolver(TypeRoomDTO.createSchema),
@@ -118,13 +117,6 @@ export function TypeRoomDialog({
             setIsCreate(false);
             console.log(defaultValue);
         }
-        // else {
-        //     setValue("typename", "");
-        //     setValue("description", "");
-        //     setValue("limit", 0);
-        //     setValue("hourlyRate", 0);
-        //     setValue("dailyRate", 0);
-        // }
         setOpen(newOpen);
     };
     return (

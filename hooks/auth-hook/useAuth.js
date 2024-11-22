@@ -5,6 +5,7 @@ import {
     logout,
     signin,
     signup,
+    verifyEmail,
 } from "../../apis/auth-api/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -19,4 +20,11 @@ export const useLogout = () => {
 };
 export const useGetIsAuthorization = () => {
     return useMutation({ mutationFn: getIsAuthorization });
+};
+
+export const useVerifyEmail = (params) => {
+    return useQuery({
+        queryKey: ["verifyEmail", params],
+        queryFn: () => verifyEmail(params),
+    });
 };

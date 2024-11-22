@@ -27,7 +27,13 @@ export function AddCartDialog({ children, typeRoom }: AddCartDialogProps) {
     const [open, setOpen] = useState(false);
     const { addToCart, typeRooms } = useCartStore();
     const onAddToCart = () => {
-        addToCart(typeRoom._id, numberOfRooms, typeRoom.typename);
+        addToCart(
+            typeRoom._id,
+            numberOfRooms,
+            typeRoom.typename,
+            typeRoom.price,
+            typeRoom.limit,
+        );
         toast.success("Added to cart!");
         console.log(typeRooms);
         setOpen(false);
