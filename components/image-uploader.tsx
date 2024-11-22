@@ -1,6 +1,6 @@
 "use client";
 
-import { Image as ImageIcon, X } from "lucide-react";
+import { ImageIcon, X } from 'lucide-react';
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -8,33 +8,35 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 
 interface ImageUploaderProps {
-    images: File[]; // Mảng các đối tượng File
-    setImages: React.Dispatch<React.SetStateAction<File[]>>; // Hàm setter để cập nhật state
-    handleUploadImages?: () => void; // Hàm để thực hiện upload các ảnh
+    images: File[];
+    setImages: React.Dispatch<React.SetStateAction<File[]>>;
+    handleUploadImages?: () => void;
     existingPreviews?: string[];
 }
+
 export default function ImageUploader({
     images,
     setImages,
     handleUploadImages,
     existingPreviews = [],
 }: ImageUploaderProps) {
-    const [previews, setPreviews] = useState<string[]>([]);
+    const [previews, setPreviews] = useState<string[]>(existingPreviews);
 
     useEffect(() => {
-        setPreviews(existingPreviews);
-    }, [existingPreviews]);
+        // Clean up object URLs to avoid memory leaks
+        return () => previews.forEach(preview => URL.revokeObjectURL(preview));
+    }, [previews]);
 
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
             setImages((prevImages) => [...prevImages, ...acceptedFiles]);
 
             const newPreviews = acceptedFiles.map((file) =>
-                URL.createObjectURL(file),
+                URL.createObjectURL(file)
             );
             setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
         },
-        [setImages],
+        [setImages]
     );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -45,8 +47,12 @@ export default function ImageUploader({
     });
 
     const removeImage = (index: number) => {
-        setImages(images.filter((_, i) => i !== index));
-        setPreviews(previews.filter((_, i) => i !== index));
+        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        setPreviews((prevPreviews) => {
+            const newPreviews = prevPreviews.filter((_, i) => i !== index);
+            URL.revokeObjectURL(prevPreviews[index]);
+            return newPreviews;
+        });
     };
 
     return (

@@ -291,11 +291,55 @@ export default function HistoryBooking() {
                   </button>
                 </div>
                 {showReviewForm === booking._id && (
-                  <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
-                    <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
-                    {/* Form review */}
+              <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
+                <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
+                <div className="mb-4">
+                  <label htmlFor="roomSelect">Select Room:</label>
+                  <select
+                    id="roomSelect"
+                    value={selectedRoom || ""}
+                    onChange={handleRoomChange}
+                    className="border p-2 rounded-md"
+                  >
+                    <option value="" disabled>
+                      Select a room
+                    </option>
+                    {booking.roomIds.map(
+                      (room: { roomTypeInfo: { _id: string } }) => (
+                        <option
+                          key={room.roomTypeInfo._id}
+                          value={room.roomTypeInfo._id}
+                        >
+                          {room.roomTypeInfo?.typename || "N/A"}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
+                <div className="flex items-center mb-4">
+                  <span className="mr-2">Rating:</span>
+                  <div className="flex space-x-1">
+                    <Rating
+                      initialValue={ratingValue}
+                      onChange={(newValue) => setRatingValue(newValue)}
+                      readonly={false}
+                    />
                   </div>
-                )}
+                </div>
+                <textarea
+                  className="w-full p-3 border rounded-md"
+                  placeholder="Write your review here..."
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                ></textarea>
+                <button
+                  className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  onClick={() => handleSubmitReview(booking._id)}
+                >
+                  Submit Review
+                </button>
+              </div>
+            )}
               </div>
             );
           })}
