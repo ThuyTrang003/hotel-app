@@ -66,7 +66,9 @@ export function PersonalInforForm({
         const payload = { ...signupData, role: "Customer" };
         signupMutate(payload, {
             onSuccess: () => {
-                toast("Signup successfully!");
+                toast(
+                    "Signup successfully! Please check email to verify account",
+                );
             },
             onError: (message) => {
                 toast.error("Error: " + message);
