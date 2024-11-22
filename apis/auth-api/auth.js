@@ -41,6 +41,16 @@ export const logout = async () => {
         throw error.response.data.error;
     }
 };
+export const verifyEmail = async (token) => {
+    const url = "/api/auth/verify";
+    try {
+        const response = await axios.get(url, { token });
+        return response.data;
+    } catch (error) {
+        console.error("Verify email failed:", error);
+        throw error.response.data.error.message;
+    }
+};
 
 export const getIsAuthorization = async () => {
     const url = "/api/auth/current-user";
