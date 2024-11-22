@@ -8,7 +8,7 @@ import RestClient from "@/features/room/utils/api-function";
 
 export default function NavBar() {
     const [active, setActive] = useState(false);
-    const [user, setUser] = useState<{ fullName: string } | null>(null);
+    const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -29,8 +29,11 @@ export default function NavBar() {
                 const userRole = parsedAccount.state.userAccount.role;
     
                 if (userRole === "Admin") {
-                    setUser({ fullName: "Admin" });
-                } else {
+                    setUser({ fullName: "Admin", role: userRole });
+                }else if( userRole === "Staff"){
+                    setUser({ fullName: "Staff", role: userRole });
+                }
+                 else {
                     fetchCustomerFullName(userId);
                 }
             }
@@ -38,15 +41,14 @@ export default function NavBar() {
     
         fetchUserFromLocalStorage();
     }, []);
-    
+
     const fetchCustomerFullName = async (userId: string) => {
         const client = new RestClient();
         try {
             const customer = await client.service("customers").get(userId);
-            console.log("CUSTOO", customer);
             if (customer && customer.fullName) {
                 console.log(`Hi, ${customer.fullName}`);
-                setUser({ fullName: customer.fullName });
+                setUser({ fullName: customer.fullName, role: customer.role });
             } else {
                 console.error(
                     "Customer data is invalid or fullName is missing",
@@ -56,7 +58,7 @@ export default function NavBar() {
             console.error("Error fetching customer data:", error);
         }
     };
-    
+
     const handleLogout = async (
         setUser: React.Dispatch<
             React.SetStateAction<{ fullName: string } | null>
@@ -82,9 +84,8 @@ export default function NavBar() {
 
     return (
         <header
-            className={`${
-                active ? "z-50 bg-white py-2 shadow-lg" : "z-50 bg-white py-3"
-            } fixed left-0 right-0 top-0 z-50 w-full transition-all duration-200`}
+            className={`${active ? "z-50 bg-white py-2 shadow-lg" : "z-50 bg-white py-3"
+                } fixed left-0 right-0 top-0 z-50 w-full transition-all duration-200`}
         >
             <div className="flex items-center justify-between gap-4 px-5 sm:gap-8 sm:px-8 md:gap-5 md:px-10 lg:gap-5 lg:px-20">
                 {/* Logo */}
@@ -141,12 +142,21 @@ export default function NavBar() {
                             >
                                 Hi, {user.fullName}
                             </Link>
-                            <Link
-                                href={"/history-booking"}
-                                className="font-medium text-[#606060] transition duration-300 hover:text-black"
-                            >
-                                History Booking
-                            </Link>
+                            {user.role === "Admin" || user.role === "Staff" ? (
+                                <Link
+                                    href={"/admin/dashboard"}
+                                    className="font-medium text-[#606060] transition duration-300 hover:text-black"
+                                >
+                                    ADMIN
+                                </Link>
+                            ) : (
+                                <Link
+                                    href={"/history-booking"}
+                                    className="font-medium text-[#606060] transition duration-300 hover:text-black"
+                                >
+                                    History Booking
+                                </Link>
+                            )}
                             <button
                                 onClick={() => handleLogout(setUser)}
                                 className="rounded-full border border-solid border-[#606060] bg-white px-4 py-2 font-medium text-black transition duration-300 hover:bg-gray-200 sm:px-6 sm:py-2 md:items-center"
