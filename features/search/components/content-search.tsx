@@ -129,7 +129,7 @@ export default function ContentSearch() {
           {loading ? (
             <p>Loading rooms...</p>
           ) : availableRooms.length === 0 ? (
-            <p className="text-red-600 font-bold">Không có phòng phù hợp theo tìm kiếm.</p>
+            <p className="text-red-600 font-bold">There are no rooms available that match your search.</p>
           ) : (
             availableRooms.map((room) => (
               <RoomItem
