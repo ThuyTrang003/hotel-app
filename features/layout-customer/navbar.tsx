@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import RestClient from "@/features/room/utils/api-function";
 
 import RestClient from "@/features/room/utils/api-function";
 

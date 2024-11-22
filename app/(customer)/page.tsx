@@ -1,7 +1,5 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useGetIsAuthorization } from "@/hooks/auth-hook/useAuth";
