@@ -122,9 +122,13 @@ class RestClient {
   }
   
 
-  async update(id: string, data: UpdateData): Promise<{ success: boolean; message?: string; data?: any }> {
+  async update(id: string, data: { currentStatus: string }): Promise<{ success: boolean; message?: string; data?: any }> {
     try {
-      const response = await fetch(`${this.baseUrl}/${this.path}/${id}`, {
+      const url = `${this.baseUrl}/${this.path}/${id}`;
+      console.log("Sending request to:", url);
+      console.log("Data sent to server:", data);
+  
+      const response = await fetch(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -133,27 +137,35 @@ class RestClient {
         credentials: "include",
       });
   
+      console.log("Response status:", response.status);
+  
+      // Kiểm tra phản hồi từ backend
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Server error:", errorData);
-        throw new Error(
-          `Server responded with status: ${response.status} - ${response.statusText}`
-        );
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Server responded with status: ${response.status} - ${response.statusText}`);
       }
   
-      const responseData = await response.json();
+      const text = await response.text();
+      if (!text) {
+        console.warn("Empty response from server.");
+        return { success: true, message: "Booking updated with no content returned." };
+      }
+  
+      const responseData = JSON.parse(text);
       return {
         success: true,
         data: responseData,
       };
     } catch (error: any) {
-      console.error(`Error updating data for id ${id}:`, error.message);
+      console.error(`Error updating booking ${id}:`, error.message);
       return {
         success: false,
         message: error.message || "Unknown error occurred",
       };
     }
   }
+  
 
   async delete(id: string) {
     try {

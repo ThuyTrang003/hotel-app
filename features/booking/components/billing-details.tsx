@@ -153,7 +153,6 @@ export default function BillingDetails() {
       const restClient = new RestClient();
       restClient.service("bookings");
       const response = await restClient.create(bookingData);
-
       if (response.success === false) {
         console.error("Booking failed:", response.message || "Unknown error");
       } else {
@@ -169,8 +168,11 @@ export default function BillingDetails() {
       }
     } catch (error) {
       if (error.errorData) {
+        alert("Please login to perform this action!");
         console.error("Booking failed with details:", error.errorData);
         setError(error.errorData.error.message);
+        router.push("/signin");
+        return;
       } else {
         console.error("Error in booking:", error);
       }

@@ -26,18 +26,24 @@ export default function NavBar() {
             if (userAccount) {
                 const parsedAccount = JSON.parse(userAccount);
                 const userId = parsedAccount.state.userAccount.id;
-                fetchCustomerFullName(userId);
+                const userRole = parsedAccount.state.userAccount.role;
+    
+                if (userRole === "Admin") {
+                    setUser({ fullName: "Admin" });
+                } else {
+                    fetchCustomerFullName(userId);
+                }
             }
         };
-
+    
         fetchUserFromLocalStorage();
     }, []);
-
+    
     const fetchCustomerFullName = async (userId: string) => {
         const client = new RestClient();
         try {
             const customer = await client.service("customers").get(userId);
-
+            console.log("CUSTOO", customer);
             if (customer && customer.fullName) {
                 console.log(`Hi, ${customer.fullName}`);
                 setUser({ fullName: customer.fullName });
@@ -50,6 +56,7 @@ export default function NavBar() {
             console.error("Error fetching customer data:", error);
         }
     };
+    
     const handleLogout = async (
         setUser: React.Dispatch<
             React.SetStateAction<{ fullName: string } | null>
@@ -115,14 +122,6 @@ export default function NavBar() {
                         </li>
                         <li>
                             <Link
-                                href={"/contact-us"}
-                                className="flex items-center text-sm tracking-wide text-[#606060] no-underline sm:text-base md:text-base"
-                            >
-                                CONTACT US
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
                                 href={"/search"}
                                 className="flex items-center justify-center gap-2 rounded-md bg-[#deb666] px-4 py-2 font-bold text-white transition-colors duration-300 ease-in-out hover:bg-[#c19a52] sm:px-6 sm:py-3 md:px-[30px] md:py-[10px]"
                             >
@@ -158,7 +157,7 @@ export default function NavBar() {
                     ) : (
                         <>
                             <Link
-                                href={"/login"}
+                                href={"/signin"}
                                 className="font-medium text-[#606060] transition duration-300 hover:text-black"
                             >
                                 Log In
@@ -216,14 +215,6 @@ export default function NavBar() {
                                     className="flex items-center tracking-wide text-[#606060] no-underline"
                                 >
                                     ROOM
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href={"/contact-us"}
-                                    className="flex items-center tracking-wide text-[#606060] no-underline"
-                                >
-                                    CONTACT US
                                 </Link>
                             </li>
                             <li>

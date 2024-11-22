@@ -43,7 +43,7 @@ export default function RoomReviews({ roomId }: { roomId: string }) {
             page: String(page),
             size: String(size),
           });
-
+          console.log("REQWEQWE",ratingsData)
         if (ratingsData.length > 0) {
           setRatings((prevRatings) => {
             const existingIds = prevRatings.map((rating) => rating._id);
@@ -154,9 +154,12 @@ export default function RoomReviews({ roomId }: { roomId: string }) {
                   <Rating initialValue={rating.score} readonly={true} />
                 </div>
               </div>
+              {rating.bookingId ?(
+
               <p className="font-semibold text-lg">
                 {rating.bookingId.userId.fullName || "Reviewer Name"}
               </p>
+              ):<p>okeee</p>}
               <p className="text-gray-600">{rating.feedback}</p>
               <p className="text-sm text-gray-500 mt-2">
                 {formatDistanceToNow(new Date(rating.createAt), {
@@ -166,7 +169,7 @@ export default function RoomReviews({ roomId }: { roomId: string }) {
             </div>
           </div>
 
-          {rating.bookingId.userId._id === userId && (
+          {rating.bookingId && rating.bookingId.userId._id === userId && (
             <div className="text-right space-x-2">
               <button
                 className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
