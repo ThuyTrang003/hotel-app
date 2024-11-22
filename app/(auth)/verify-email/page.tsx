@@ -71,10 +71,10 @@ export default function VerifyEmailPage() {
                     ) : (
                         <Button
                             onClick={() => {
-                                router.replace("/signin");
+                                router.replace("/signup");
                             }}
                         >
-                            Go to signin
+                            Go to signup
                         </Button>
                     )}
                 </CardFooter>
