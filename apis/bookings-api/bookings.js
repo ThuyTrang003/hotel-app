@@ -9,7 +9,7 @@ export const getAllBookings = async (params) => {
         return response.data;
     } catch (error) {
         console.error("Get all bookings failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 
@@ -20,7 +20,7 @@ export const getBookingById = async (id) => {
         return response.data;
     } catch (error) {
         console.error("Get booking by id failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 export const createBooking = async (payload) => {
@@ -30,7 +30,7 @@ export const createBooking = async (payload) => {
         return response.data;
     } catch (error) {
         console.error("Create booking failed:", error);
-        throw error.response.data.error;
+        throw error.response.data.error.message;
     }
 };
 
