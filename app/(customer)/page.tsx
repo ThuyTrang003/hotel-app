@@ -1,7 +1,5 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useGetIsAuthorization } from "@/hooks/auth-hook/useAuth";
@@ -11,7 +9,10 @@ import { useUserAccount } from "@/stores/user-account/store-user-account";
 import { FavoriteRooms } from "@/features/home/components/favorite-rooms";
 import Feature from "@/features/home/components/feature-home";
 import Hero from "@/features/home/components/hero";
-
+import { useEffect, useState } from "react";
+import {
+  ChevronUp
+} from "lucide-react";
 export default function Home() {
     const { mutate: isAuthorization } = useGetIsAuthorization();
     const { resetUserAccount, setUserAccount } = useUserAccount();
