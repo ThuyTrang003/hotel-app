@@ -13,7 +13,7 @@ export const signin = async (payload) => {
 
 export const signup = async (payload) => {
     payload = {
-        fullName: payload.fullName.trim(),
+        fullName: payload.fullName,
         birthDate: payload.dateOfBirth,
         email: payload.email,
         gender: payload.gender,
