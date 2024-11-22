@@ -45,10 +45,10 @@ export const verifyEmail = async (token) => {
     const url = "/api/auth/verify";
     try {
         const response = await axios.get(url, { token });
-        return response.data;
+        return response.data.message;
     } catch (error) {
         console.error("Verify email failed:", error);
-        throw error.response.data.error.message;
+        throw error.response.data.error;
     }
 };
 
