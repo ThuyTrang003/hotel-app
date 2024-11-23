@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 import { useCartStore } from "@/stores/admin/store-cart";
 
+import { moneyFormatter } from "@/utils/money-formatter";
+
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -41,25 +43,38 @@ export function CartDropdown({ children }: CartDropdownProps) {
                             {typeRooms.map((item) => (
                                 <div
                                     key={item.typeId}
-                                    className="flex items-center gap-4"
+                                    className="flex items-start gap-4"
                                 >
                                     <div className="grid flex-1 gap-1">
-                                        <h3 className="text-base font-medium">
+                                        <h3 className="text-sm font-medium">
                                             {item.typeName}
                                         </h3>
-                                        <div className="text-sm">
-                                            Quantity: {item.numberOfRooms}
+                                        <div className="text-sm text-muted-foreground">
+                                            <p>Rooms: {item.numberOfRooms}</p>
+                                            <p>Limit: {item.limit} persons</p>
+                                            <p>
+                                                Hourly:{" "}
+                                                {moneyFormatter(
+                                                    item.price.hourlyRate,
+                                                )}
+                                            </p>
+                                            <p>
+                                                Daily:{" "}
+                                                {moneyFormatter(
+                                                    item.price.dailyRate,
+                                                )}
+                                            </p>
                                         </div>
                                     </div>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8"
-                                        onClick={() =>
-                                            handleRemoveItem(item.typeId)
-                                        }
+                                        className="h-8 w-8 shrink-0"
                                     >
                                         <X className="h-4 w-4" />
+                                        <span className="sr-only">
+                                            Remove {item.typeName}
+                                        </span>
                                     </Button>
                                 </div>
                             ))}
