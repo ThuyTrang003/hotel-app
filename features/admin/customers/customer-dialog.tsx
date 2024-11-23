@@ -115,7 +115,7 @@ export function CustomerDialog({
             <DialogContent className="sm:max-w-[580px]">
                 <DialogHeader>
                     <DialogTitle>
-                        {isCreate ? "Add" : "Update"} room
+                        {isCreate ? "Add" : "Update"} customer
                     </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={onSubmit}>
