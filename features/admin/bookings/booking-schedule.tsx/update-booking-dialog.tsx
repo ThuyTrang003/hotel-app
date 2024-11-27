@@ -83,7 +83,7 @@ export function UpdateBookingDialog({
                 onSuccess: () => {
                     toast.success("Update booking success!");
                     queryClient.invalidateQueries({
-                        queryKey: ["getBookingById"],
+                        queryKey: ["getAllBookings"],
                     });
                     setOpen(false);
                 },

@@ -14,7 +14,7 @@ export const useGetAllOverOccupancyCharge = () => {
     });
 };
 
-export const useGetBookingById = (id) => {
+export const useGetOverOccupancyChargeById = (id) => {
     return useQuery({
         queryKey: ["getOverOccupancyChargeById", id],
         queryFn: () => getOverOccupancyChargeById(id),
