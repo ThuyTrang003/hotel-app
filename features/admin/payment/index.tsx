@@ -209,7 +209,7 @@ export function Payment() {
                                         value={field.value}
                                     >
                                         <SelectTrigger id="gender">
-                                            <SelectValue placeholder="Select your gender" />
+                                            <SelectValue placeholder="Select payment method" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {paymentMethodValue.map(
@@ -228,6 +228,9 @@ export function Payment() {
                             />
                         </div>
                     </div>
+                    {errors.paymentMethod && (
+                        <ErrorField>{errors.paymentMethod.message}</ErrorField>
+                    )}
                 </div>
                 <div className="flex justify-end gap-2">
                     <Button type="submit">Save changes</Button>

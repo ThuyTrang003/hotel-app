@@ -46,6 +46,7 @@ const bookingSchema = z.object({
         }), // Đảm bảo sau chuyển đổi là số nguyên
     voucherCode: z.string().optional(),
     paymentMethod: z.string().min(1, "Value is required"),
+    currentStatus: z.string().optional(),
 });
 
 export class bookingDTO {
@@ -59,6 +60,14 @@ export class bookingDTO {
         paymentMethod: true,
         paidAmount: true,
     });
+    public static updateSchema = bookingSchema.pick({
+        checkInTime: true,
+        checkOutTime: true,
+        paidAmount: true,
+        currentStatus: true,
+        numberOfGuests: true,
+    });
 }
 
 export type createBooking = z.infer<typeof bookingDTO.createSchema>;
+export type updateBooking = z.infer<typeof bookingDTO.updateSchema>;

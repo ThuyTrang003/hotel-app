@@ -1,4 +1,4 @@
-import { BookingsTable } from ".";
+import { BookingsTable } from "./booking-schedule.tsx";
 import { OverOccupancyChargeTable } from "./over-occupancy-charges";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
