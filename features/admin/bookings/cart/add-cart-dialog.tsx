@@ -54,7 +54,7 @@ export function AddCartDialog({ children, typeRoom }: AddCartDialogProps) {
                 <div className="grid gap-4 px-1 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="shiftName" className="text-right">
-                            Shift Name
+                            Number of rooms
                         </Label>
                         <div className="col-span-3">
                             <Input

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { useSidebar } from "@/stores/admin/store-sidebar";
 
-import { BookingsTable } from "@/features/admin/bookings";
+import { BookingTabs } from "@/features/admin/bookings/booking-tabs";
 
 export default function BookingsPage() {
     const { setFocusState } = useSidebar();
@@ -13,7 +13,7 @@ export default function BookingsPage() {
     }, [setFocusState]);
     return (
         <div className="bg-white p-4">
-            <BookingsTable />
+            <BookingTabs />
         </div>
     );
 }

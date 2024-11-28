@@ -5,11 +5,15 @@ import { useState } from "react";
 
 import { useGetAllTypeRooms } from "@/hooks/rooms-hook/useTypeRooms";
 
+import { useUserAccount } from "@/stores/user-account/store-user-account";
+
 import { DataTablePagination } from "@/components/data-table-pagination";
 import TableSkeleton from "@/components/table-skeleton";
 import { Button } from "@/components/ui/button";
 
 export function TypeRoomsTable() {
+    const { userAccount } = useUserAccount();
+
     const [pageSize, setPageSize] = useState(10);
     const [pageNumber, setPageNumber] = useState(1);
 
@@ -26,21 +30,19 @@ export function TypeRoomsTable() {
     if (isPending) {
         return <TableSkeleton />;
     }
+
     return (
         <>
-            <div className="flex justify-end space-x-4">
-                <TypeRoomDialog>
-                    <Button variant="secondary">
-                        <Plus size={20} strokeWidth={1.75} /> Add
-                    </Button>
-                </TypeRoomDialog>
-                <Button
-                    variant="outline"
-                    //onClick={}
-                >
-                    <RefreshCcw size={20} strokeWidth={1.75} /> Refresh
-                </Button>
-            </div>
+            {userAccount && userAccount?.role === "Admin" && (
+                <div className="flex justify-end space-x-4">
+                    <TypeRoomDialog>
+                        <Button variant="secondary">
+                            <Plus size={20} strokeWidth={1.75} /> Add
+                        </Button>
+                    </TypeRoomDialog>
+                </div>
+            )}
+
             {allTypeRoomsData && (
                 <DataTablePagination
                     columns={TypeRoomscolumns}

@@ -1,92 +1,107 @@
 "use client";
 
-const Hero = () => {
-    return (
-        <section className="relative flex h-auto min-h-screen w-full" id="home">
-            <div className="absolute bottom-0 top-0 z-10 h-full w-full"></div>
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { LicenseInfo } from "@mui/x-license";
+import TextField from "@mui/material/TextField";
+import dayjs from "dayjs";
+import "dayjs/locale/vi"; // Import Vietnamese locale or your preferred locale
+import DateTimeRangePicker from "@/components/ui/date-time-range-picker";
+import {Input} from "@/components/ui/input";
 
-            <video
-                src="/videos/video.mp4"
-                muted
-                autoPlay
-                loop
-                className="absolute bottom-0 top-0 z-0 h-full w-full object-cover"
-            ></video>
-            <div className="absolute z-30 m-auto flex h-max w-full flex-col justify-center gap-y-3 pb-12 pt-28 lg:pb-24 lg:pt-64">
-                <div className="px-0 py-8 text-center text-white">
-                    <h1 className="mb-4 text-5xl font-bold">
-                        Welcome to Our Website
-                    </h1>
-                    <p className="text-2xl">
-                        Discover amazing content with us!
-                    </p>
-                </div>
-                <div className="mx-5 mt-20">
-                    <div className="flex flex-col gap-6 rounded-xl bg-white px-0 py-10 md:flex-row md:gap-x-12 md:px-0">
-                        <div className="flex w-full flex-col xl:px-6">
-                            <label
-                                htmlFor="checkInDate"
-                                className="pb-2 text-black"
-                            >
-                                Checkin date:
-                            </label>
-                            <div>
-                                <input
-                                    type="date"
-                                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex w-full flex-col xl:px-6">
-                            <label
-                                htmlFor="checkOutDate"
-                                className="pb-2 text-black"
-                            >
-                                Checkout date:
-                            </label>
-                            <div>
-                                <input
-                                    type="date"
-                                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex w-full flex-col xl:px-6">
-                            <label
-                                htmlFor="roomType"
-                                className="pb-2 text-black"
-                            >
-                                Room type:
-                            </label>
-                            <div className="relative">
-                                <select
-                                    id="roomType"
-                                    className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-[9px] pr-8 outline-none"
-                                    style={{
-                                        backgroundImage: `url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"%3E%3Cpath stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /%3E%3C/svg%3E')`,
-                                        backgroundPosition:
-                                            "right 0.75rem center",
-                                        backgroundSize: "1.5rem",
-                                        backgroundRepeat: "no-repeat",
-                                    }}
-                                >
-                                    <option value="single">Single Room</option>
-                                    <option value="double">Double Room</option>
-                                    <option value="suite">Suite</option>
-                                    <option value="family">Family Room</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex w-full flex-col justify-end xl:px-6">
-                            <button className="bg-amber-1 hover:bg-amber-1/80 w-full rounded-lg px-8 py-[10px] text-white transition-colors duration-300">
-                                CHECK AVAILABILITY
-                            </button>
-                        </div>
-                    </div>
-                </div>
+// Set the Day.js locale globally to 'vi' for DD/MM/YYYY format
+dayjs.locale("vi");
+
+LicenseInfo.setLicenseKey(
+  "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y"
+);
+
+const Hero = () => {
+  const [checkInOut, setCheckInOut] = useState({
+    checkIn: new Date(),
+    checkOut: new Date(),
+  });
+  const [guestCount, setGuestCount] = useState(1);
+  const router = useRouter();
+
+  const handleDateTimeChange = (checkIn, checkOut) => {
+    setCheckInOut({ checkIn, checkOut });
+  };
+
+  const handleCheckAvailability = () => {
+    const { checkIn, checkOut } = checkInOut;
+    if (checkIn && checkOut && guestCount) {
+      router.push(
+        `/search?checkIn=${dayjs(checkIn).format(
+          "YYYY-MM-DDTHH:mm:ss"
+        )}&checkOut=${dayjs(checkOut).format(
+          "YYYY-MM-DDTHH:mm:ss"
+        )}&guests=${guestCount}`
+      );
+    }
+  };
+
+  return (
+    <section
+      className="w-full h-auto relative flexCenter min-h-screen"
+      id="home"
+    >
+      <div className="absolute h-full w-full bg-[#2f6a7f2f] top-0 bottom-0 z-10"></div>
+
+      <video
+        src="/videos/video.mp4"
+        muted
+        autoPlay
+        loop
+        className="absolute top-0 bottom-0 h-full w-full object-cover z-0"
+      ></video>
+      <div className="absolute w-full h-max pt-28 pb-12 flex gap-y-3 flex-col justify-center m-auto z-30 lg:pt-64 lg:pb-24">
+        <div className="px-0 py-8 text-white text-center">
+          <h1 className="text-5xl font-bold mb-4">Welcome to Our Website</h1>
+          <p className="text-2xl">Discover amazing content with us!</p>
+        </div>
+        <div className="mt-10 mx-auto">
+          <div className="flex flex-row space-x-10 items-start py-10 px-32 bg-white rounded-xl">
+            <div className="flex flex-col">
+              <label className="text-lg font-bold">
+                Check-in and Check-out date
+              </label>
+              <DateTimeRangePicker
+                className="mt-2"
+                checkIn={checkInOut.checkIn}
+                checkOut={checkInOut.checkOut}
+                onChange={handleDateTimeChange}
+              />
             </div>
-        </section>
-    );
+            <div className="flex flex-col">
+              <label className="text-lg font-bold">Guests</label>
+              <Input
+                type="number"
+                placeholder="Guest"
+                value={guestCount}
+                onChange={(e) => setGuestCount(e.target.value)}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
+                customSize="default"
+                className="w-52 mt-2 h-14"
+              />
+            </div>
+
+            <div className="flex items-center mt-9">
+              <button
+                onClick={handleCheckAvailability}
+                className="bg-[#d9af63] text-white px-9 py-4 rounded-lg hover:bg-[#c89d55] transition-colors duration-300"
+              >
+                CHECK AVAILABILITY
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Hero;

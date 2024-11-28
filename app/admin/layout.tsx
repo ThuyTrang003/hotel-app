@@ -2,8 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
+
+import { useGetIsAuthorization } from "@/hooks/auth-hook/useAuth";
 
 import { useUserAccount } from "@/stores/user-account/store-user-account";
 
@@ -15,10 +18,28 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 export default function Layout({ children }: { children: React.ReactNode }) {
     const { userAccount } = useUserAccount();
     const router = useRouter();
+
+    const { resetUserAccount, setUserAccount } = useUserAccount();
+    const { mutate: isAuthorization } = useGetIsAuthorization();
+    //kiểm tra cho t/h hết token
+    useEffect(() => {
+        isAuthorization(undefined, {
+            onSuccess: (res) => {
+                setUserAccount(res.user_id, res.role);
+            },
+            onError: () => {
+                resetUserAccount();
+                router.replace("/signin");
+            },
+        });
+    }, []);
     useEffect(() => {
         console.log("run useEffect layout admin");
         if (userAccount) {
-            if (userAccount?.role !== "Admin") {
+            if (
+                userAccount?.role !== "Admin" &&
+                userAccount?.role !== "Staff"
+            ) {
                 router.replace("/"); // Chuyển hướng nếu không phải admin
             }
         }

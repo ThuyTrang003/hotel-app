@@ -89,3 +89,12 @@ export function isDateInRange(dateStr, startDay, endDay) {
     // So sánh ngày (không tính giờ)
     return dateToCheck >= startDate && dateToCheck <= endDate;
 }
+// 2024-11-23T17:00:00.000Z -> 2024-11-23T17:00
+export function formatDateForDateTimeLocal(isoDate) {
+    const date = new Date(isoDate);
+
+    // Tạo chuỗi `YYYY-MM-DDTHH:mm`
+    const formattedDate = date.toISOString().slice(0, 16);
+
+    return formattedDate;
+}

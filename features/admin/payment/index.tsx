@@ -1,7 +1,9 @@
 "use client";
 
 import { SearchCustomer } from "../customers/search-customer";
+import SearchPromotionDialog from "../promotions/search-promotion-dialog";
 import { bookingDTO, createBooking } from "../utils/booking-validate";
+import { calculateAmount } from "../utils/calculate-amount";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -10,6 +12,8 @@ import { toast } from "sonner";
 import { useCreatePBooking } from "@/hooks/bookings-hook/useBookings";
 
 import { useCartStore } from "@/stores/admin/store-cart";
+
+import { moneyFormatter } from "@/utils/money-formatter";
 
 import { ErrorField } from "@/components/error-field";
 import { Button } from "@/components/ui/button";
@@ -28,7 +32,7 @@ export function Payment() {
     const { typeRooms, clearCart } = useCartStore();
     const paymentMethodValue = ["Credit Card", "Cash"];
     const [userId, setUserId] = useState("");
-
+    const [totalAmount, setTotalAmount] = useState(0);
     const {
         register,
         handleSubmit,
@@ -65,20 +69,57 @@ export function Payment() {
                 paymentMethod: data.paymentMethod,
             };
             if (data.voucherCode) {
-                payload = { ...payload, voucherCode: data.voucherCode };
+                createBooking(
+                    { ...payload, voucherCode: data.voucherCode },
+                    {
+                        onSuccess: () => {
+                            toast.success("Booking successful!");
+                            clearCart();
+                        },
+                        onError: (message) => {
+                            toast.error("Error: " + message);
+                        },
+                    },
+                );
+            } else {
+                createBooking(payload, {
+                    onSuccess: () => {
+                        toast.success("Booking successful!");
+                        clearCart();
+                    },
+                    onError: (message) => {
+                        toast.error("Error: " + message);
+                    },
+                });
             }
-
-            createBooking(payload, {
-                onSuccess: () => {
-                    toast.success("Booking successful!");
-                    clearCart();
-                },
-                onError: (message) => {
-                    toast.error("Error: " + message);
-                },
-            });
         }
     });
+
+    const handleCalculateAmount = () => {
+        if (
+            getValues("checkInTime") &&
+            getValues("checkOutTime") &&
+            getValues("redeemedPoint") &&
+            getValues("overOccupancyCharge")
+        ) {
+            let daily = 0;
+            let hourly = 0;
+            typeRooms.map((typeRoom) => {
+                daily += typeRoom.price.dailyRate;
+                hourly += typeRoom.price.hourlyRate;
+            });
+
+            const cost = calculateAmount(
+                getValues("checkInTime"),
+                getValues("checkOutTime"),
+                hourly,
+                daily,
+                getValues("overOccupancyCharge"),
+                getValues("redeemedPoint"),
+            );
+            setTotalAmount(cost);
+        }
+    };
     return (
         <div className="grid grid-cols-2 gap-4">
             <form onSubmit={onSubmit}>
@@ -153,6 +194,22 @@ export function Payment() {
                         </div>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label
+                            htmlFor="overOccupancyCharge"
+                            className="text-right"
+                        >
+                            Over Occupancy Charge
+                        </Label>
+                        <div className="col-span-3">
+                            <Input {...register("overOccupancyCharge")} />
+                            {errors.overOccupancyCharge && (
+                                <ErrorField>
+                                    {errors.overOccupancyCharge.message}
+                                </ErrorField>
+                            )}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="redeemedPoint" className="text-right">
                             Point
                         </Label>
@@ -169,22 +226,30 @@ export function Payment() {
                             )}
                         </div>
                     </div>
+
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="voucherCode" className="text-right">
-                            Voucher Code
+                        <Label htmlFor="paidAmount" className="text-right">
+                            Total Amount
                         </Label>
-                        <div className="col-span-3">
-                            <Input {...register("voucherCode")} />
-                            {errors.voucherCode && (
-                                <ErrorField>
-                                    {errors.voucherCode.message}
-                                </ErrorField>
-                            )}
+                        <div className="col-span-2">
+                            <Input
+                                value={moneyFormatter(totalAmount)}
+                                disabled
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <Button
+                                type="button"
+                                className="w-full"
+                                onClick={handleCalculateAmount}
+                            >
+                                Calculate
+                            </Button>
                         </div>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="paidAmount" className="text-right">
-                            Paid Amount
+                            Paid Amount (at least 20% in total amount)
                         </Label>
                         <div className="col-span-3">
                             <Input {...register("paidAmount")} />
@@ -195,6 +260,31 @@ export function Payment() {
                             )}
                         </div>
                     </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="voucherCode" className="text-right">
+                            Voucher Code
+                        </Label>
+                        <div className="col-span-2">
+                            <Input {...register("voucherCode")} />
+                            {errors.voucherCode && (
+                                <ErrorField>
+                                    {errors.voucherCode.message}
+                                </ErrorField>
+                            )}
+                        </div>
+                        <div className="col-span-1">
+                            <SearchPromotionDialog totalAmount={totalAmount}>
+                                <Button
+                                    type="button"
+                                    className="w-full"
+                                    onClick={handleCalculateAmount}
+                                >
+                                    Search
+                                </Button>
+                            </SearchPromotionDialog>
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="paymentMethod" className="text-right">
                             Payment Method
@@ -209,7 +299,7 @@ export function Payment() {
                                         value={field.value}
                                     >
                                         <SelectTrigger id="gender">
-                                            <SelectValue placeholder="Select your gender" />
+                                            <SelectValue placeholder="Select payment method" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {paymentMethodValue.map(
@@ -226,11 +316,16 @@ export function Payment() {
                                     </Select>
                                 )}
                             />
+                            {errors.paymentMethod && (
+                                <ErrorField>
+                                    {errors.paymentMethod.message}
+                                </ErrorField>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-end gap-2">
-                    <Button type="submit">Save changes</Button>
+                    <Button type="submit">Book</Button>
                 </div>
             </form>
             <div className="mt-4">

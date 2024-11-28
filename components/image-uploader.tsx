@@ -22,7 +22,10 @@ export default function ImageUploader({
     const [previews, setPreviews] = useState<string[]>([]);
 
     useEffect(() => {
-        setPreviews(existingPreviews);
+        // setPreviews(existingPreviews);
+        if (existingPreviews.length > 0) {
+            setPreviews(existingPreviews);
+        }
     }, [existingPreviews]);
 
     const onDrop = useCallback(

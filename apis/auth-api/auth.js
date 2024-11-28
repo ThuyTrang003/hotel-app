@@ -13,7 +13,7 @@ export const signin = async (payload) => {
 
 export const signup = async (payload) => {
     payload = {
-        fullName: payload.fullName.trim(),
+        fullName: payload.fullName,
         birthDate: payload.dateOfBirth,
         email: payload.email,
         gender: payload.gender,
@@ -38,6 +38,16 @@ export const logout = async () => {
         return response;
     } catch (error) {
         console.error("Login failed:", error);
+        throw error.response.data.error;
+    }
+};
+export const verifyEmail = async (token) => {
+    const url = "/api/auth/verify";
+    try {
+        const response = await axios.get(url, { token });
+        return response.data.message;
+    } catch (error) {
+        console.error("Verify email failed:", error);
         throw error.response.data.error;
     }
 };
