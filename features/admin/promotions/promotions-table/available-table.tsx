@@ -28,7 +28,6 @@ export function AvailableTable() {
     if (isPending) {
         return <TableSkeleton />;
     }
-    console.log(allPromotionsData);
 
     return (
         <>

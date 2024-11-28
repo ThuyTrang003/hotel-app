@@ -20,7 +20,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Customer {
+export interface IPromotion {
     _id: string;
     code: string;
     description: string;
@@ -33,7 +33,7 @@ interface Customer {
     userUsedVoucher: string[];
 }
 
-export const customersColumns: ColumnDef<Customer>[] = [
+export const customersColumns: ColumnDef<IPromotion>[] = [
     {
         accessorKey: "code",
         header: "Code",
