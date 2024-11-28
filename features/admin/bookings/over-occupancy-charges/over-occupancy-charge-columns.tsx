@@ -3,6 +3,8 @@
 import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
+import { moneyFormatter } from "@/utils/money-formatter";
+
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -29,7 +31,9 @@ export const OverOccupancyChargeColumns: ColumnDef<Shift>[] = [
         accessorKey: "extraCharge",
         header: "Extra Charge",
         cell: ({ row }) => (
-            <div className="text-left">{row.getValue("extraCharge")}</div>
+            <div className="text-left">
+                {moneyFormatter(row.getValue("extraCharge"))}
+            </div>
         ),
     },
     {

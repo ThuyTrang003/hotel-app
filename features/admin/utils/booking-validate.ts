@@ -7,16 +7,19 @@ const bookingSchema = z.object({
     checkInTime: z.string().refine(
         (value) => {
             const date = new Date(value);
-            return !isNaN(date.getTime()); // Kiểm tra giá trị hợp lệ
+            const now = new Date();
+            return !isNaN(date.getTime()) && date.getTime() > now.getTime(); // Kiểm tra giá trị hợp lệ
         },
-        { message: "Invalid check in time" },
+        { message: "Check-in time must be in the future" },
     ),
     checkOutTime: z.string().refine(
         (value) => {
             const date = new Date(value);
-            return !isNaN(date.getTime()); // Kiểm tra giá trị hợp lệ
+            const now = new Date();
+
+            return !isNaN(date.getTime()) && date.getTime() > now.getTime(); // Kiểm tra giá trị hợp lệ
         },
-        { message: "Invalid check in time" },
+        { message: "Check-out time must be in the future" },
     ),
     paidAmount: z
         .union([z.string(), z.number()])
@@ -47,6 +50,14 @@ const bookingSchema = z.object({
     voucherCode: z.string().optional(),
     paymentMethod: z.string().min(1, "Value is required"),
     currentStatus: z.string().optional(),
+    overOccupancyCharge: z
+        .union([z.string(), z.number()])
+        .transform((val) => String(val).trim()) // Chuyển đổi chuỗi thành số
+        .refine((val) => /^[0-9]+(\.[0-9]+)?$/.test(String(val)), {
+            message: "Value must be a valid number",
+        })
+        .transform((val) => parseFloat(val))
+        .refine((val) => !isNaN(val), { message: "Value must be a number" }),
 });
 
 export class bookingDTO {
@@ -59,6 +70,7 @@ export class bookingDTO {
         voucherCode: true,
         paymentMethod: true,
         paidAmount: true,
+        overOccupancyCharge: true,
     });
     public static updateSchema = bookingSchema.pick({
         checkInTime: true,
