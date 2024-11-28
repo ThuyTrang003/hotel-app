@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, addMonths, parseISO, parse, startOfWeek, getDay } from "date-fns";
+import { format, addDays, parseISO, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import RestClient from "@/features/room/utils/api-function";
 
@@ -12,10 +12,11 @@ const locales = {
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek,
+  startOfWeek: () => 0, 
   getDay,
   locales,
 });
+
 
 const RoomAvailability = ({ typeId }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -27,19 +28,19 @@ const RoomAvailability = ({ typeId }) => {
     const restClient = new RestClient();
 
     const fetchAvailability = async () => {
-      const startDate = format(currentDate, "yyyy-MM-01");
-      const endDate = format(addMonths(currentDate, 1), "yyyy-MM-dd");
+      const startDate = format(addDays(currentDate, -3), "yyyy-MM-dd");
+
+      const endDate = format(addDays(currentDate, 3), "yyyy-MM-dd");
 
       setIsLoading(true);
       try {
         console.log("Fetching availability with:", { typeId, startDate, endDate });
 
         const { data } = await restClient
-          .service("rooms/room-availability")
+          .service(`type-rooms/${typeId}/time`)
           .find({
-            typeId,
-            startDate,
-            endDate,
+            checkInTime: startDate, 
+            checkOutTime: endDate,
           });
 
         console.log("API response:", data);
@@ -61,7 +62,7 @@ const RoomAvailability = ({ typeId }) => {
         const notAvailableEvents = notAvailableSlots.map((date: string, index: any) => ({
           id: `not-available-${index}`,
           start: parseISO(date),
-          end: parseISO(date), 
+          end: parseISO(date),
           title: "Not Available",
         }));
 

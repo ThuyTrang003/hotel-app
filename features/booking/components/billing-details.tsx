@@ -128,7 +128,7 @@ export default function BillingDetails() {
         const parsedAccount = JSON.parse(userAccount);
         userId = parsedAccount.state.userAccount.id;
       }
-
+  
       const bookingData = {
         userId: userId,
         typeRooms: roomData.roomDetails.map((room) => ({
@@ -145,26 +145,27 @@ export default function BillingDetails() {
         paymentMethod: "Credit Card",
         redeemedPoint: pointsToApply,
       };
-
+  
       if (selectedVoucher && selectedVoucher.code) {
         bookingData.voucherCode = selectedVoucher.code;
       }
-
+  
       const restClient = new RestClient();
       restClient.service("bookings");
-      const response = await restClient.create(bookingData);
-      if (response.success === false) {
-        console.error("Booking failed:", response.message || "Unknown error");
+  
+      const bookingResponse = await restClient.create(bookingData);
+      if (bookingResponse.success === false) {
+        console.error("Booking failed:", bookingResponse.message || "Unknown error");
+        return;
+      }
+      localStorage.setItem("bookingData", JSON.stringify(bookingResponse));
+      // alert("Your booking has been successfully created!");
+      const paymentResponse = await restClient.momoPayment(paidAmount);
+      if (paymentResponse.resultCode === 0) {
+        window.location.href = paymentResponse.shortLink;
       } else {
-        alert("Your booking has been successfully completed!");
-
-        localStorage.setItem("bookingData", JSON.stringify(response));
-        const url = new URL(window.location);
-        url.searchParams.delete("checkIn");
-        url.searchParams.delete("checkOut");
-        url.searchParams.delete("roomDetails");
-        window.history.replaceState({}, "", url);
-        router.push("/confirmation");
+        console.error("Payment failed:", paymentResponse.message || "Unknown error");
+        alert("Payment failed. Please try again later.");
       }
     } catch (error) {
       if (error.errorData) {
@@ -178,6 +179,7 @@ export default function BillingDetails() {
       }
     }
   };
+  
 
   return (
     <div className="bg-gray-200 min-h-screen flex flex-col items-center px-4 py-5">
@@ -222,7 +224,7 @@ export default function BillingDetails() {
           {/* Payment Method Section */}
           <div className="bg-white p-6 rounded-md shadow">
             <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
-            <div className="flex items-center mb-4">
+            {/* <div className="flex items-center mb-4">
               <Image
                 width={40}
                 height={40}
@@ -235,7 +237,7 @@ export default function BillingDetails() {
 
             <div className="flex justify-center mb-4">
               <QRCode value={`Payment: ${paidAmount} VND`} size={128} />
-            </div>
+            </div> */}
 
             {/* Input for paidAmount */}
             <div className="mb-4">

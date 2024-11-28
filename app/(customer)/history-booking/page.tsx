@@ -33,6 +33,9 @@ export default function HistoryBooking() {
   const [bookingsCache, setBookingsCache] = useState<Map<number, any>>(
     new Map()
   );
+  const [activeTab, setActiveTab] = useState("Reserved");
+
+
 
   const bookingClient = new RestClient().service("bookings");
   const typeRoomClient = new RestClient().service("type-rooms");
@@ -72,7 +75,8 @@ export default function HistoryBooking() {
         bookingResponse.data.map(async (booking: { roomIds: any[] }) => {
           const roomsWithTypeInfo = await Promise.all(
             booking.roomIds.map(async (room: { typeId: any }) => {
-              const roomTypeData = await fetchRoomTypeById(room.typeId);
+              console.log("aaaa",room)
+              const roomTypeData = await fetchRoomTypeById(room.typeId._id);
               return { ...room, roomTypeInfo: roomTypeData };
             })
           );
@@ -143,13 +147,15 @@ export default function HistoryBooking() {
       await bookingClient.update(bookingId, { currentStatus: "Cancelled" });
       alert("Booking cancelled successfully!");
       const userAccount = localStorage.getItem("userAccount");
+      let userId = null;
       if (userAccount) {
         const parsedAccount = JSON.parse(userAccount);
-        const userId = parsedAccount.state.userAccount.id;
+        userId = parsedAccount.state.userAccount.id;
         if (userId) {
           fetchBookings(userId, metadata.currentPage);
         }
       }
+      fetchBookings(userId, metadata.currentPage);
     } catch (error) {
       console.error("Error cancelling booking:", error);
       alert("Failed to cancel booking.");
@@ -178,6 +184,19 @@ export default function HistoryBooking() {
     }
   };
 
+  const filteredBookings = bookings.filter((booking) => {
+    if (activeTab === "Reserved") return booking.currentStatus === "Reserved";
+    if (activeTab === "Cancelled") return booking.currentStatus === "Cancelled";
+    if (activeTab === "Left") return booking.currentStatus === "Left";
+    return true;
+  });
+
+  const currentBookings = filteredBookings.slice(
+    (metadata.currentPage - 1) * metadata.sizeEachPage,
+    metadata.currentPage * metadata.sizeEachPage
+  );
+  console.log("CURRR",currentBookings)
+
   return (
     <div className="mt-10 py-20 px-6 mb-12">
       <h2 className="flex items-center justify-center text-2xl font-bold mb-4">
@@ -200,15 +219,29 @@ export default function HistoryBooking() {
           <option value={50}>50</option>
         </select>
       </div>
-
+      <div className="flex justify-center items-center space-x-2 p-4 bg-white rounded-lg">
+        {["Reserved", "Cancelled", "Left"].map((tab) => (
+          <button
+            key={tab}
+            className={`px-6 py-2 font-medium rounded-lg transition-all duration-300 
+        ${activeTab === tab
+                ? "bg-white text-blue-600 shadow-md border border-blue-500"
+                : "bg-blue-500 text-white hover:bg-blue-400"
+              }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
       {/* Kiểm tra nếu bookings rỗng */}
-      {bookings.length === 0 ? (
+      {filteredBookings.length === 0 ? (
         <div className="text-center text-gray-600 text-lg">
-          No bookings available.
+          No bookings available for {activeTab}.
         </div>
       ) : (
         <div className="space-y-4">
-          {bookings.map((booking) => {
+          {currentBookings.map((booking) => {
             const isReviewAllowed = new Date() > new Date(booking.checkOutTime);
 
             return (
@@ -262,7 +295,7 @@ export default function HistoryBooking() {
                         </p>
                         <p className="text-sm text-gray-600">
                           <strong>Room Type:</strong>{" "}
-                          {room.roomTypeInfo?.typename || "N/A"}
+                          {room.typeId?.typename || "N/A"}
                         </p>
                         <p className="text-sm text-gray-600">
                           <strong>Description:</strong>{" "}
@@ -291,55 +324,55 @@ export default function HistoryBooking() {
                   </button>
                 </div>
                 {showReviewForm === booking._id && (
-              <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
-                <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
-                <div className="mb-4">
-                  <label htmlFor="roomSelect">Select Room:</label>
-                  <select
-                    id="roomSelect"
-                    value={selectedRoom || ""}
-                    onChange={handleRoomChange}
-                    className="border p-2 rounded-md"
-                  >
-                    <option value="" disabled>
-                      Select a room
-                    </option>
-                    {booking.roomIds.map(
-                      (room: { roomTypeInfo: { _id: string } }) => (
-                        <option
-                          key={room.roomTypeInfo._id}
-                          value={room.roomTypeInfo._id}
-                        >
-                          {room.roomTypeInfo?.typename || "N/A"}
+                  <div className="border p-6 rounded-md mt-4 bg-white shadow-md">
+                    <h3 className="text-xl font-semibold mb-4">Leave a Review</h3>
+                    <div className="mb-4">
+                      <label htmlFor="roomSelect">Select Room:</label>
+                      <select
+                        id="roomSelect"
+                        value={selectedRoom || ""}
+                        onChange={handleRoomChange}
+                        className="border p-2 rounded-md"
+                      >
+                        <option value="" disabled>
+                          Select a room
                         </option>
-                      )
-                    )}
-                  </select>
-                </div>
-                <div className="flex items-center mb-4">
-                  <span className="mr-2">Rating:</span>
-                  <div className="flex space-x-1">
-                    <Rating
-                      initialValue={ratingValue}
-                      onChange={(newValue) => setRatingValue(newValue)}
-                      readonly={false}
-                    />
+                        {booking.roomIds.map(
+                          (room: { roomTypeInfo: { _id: string } }) => (
+                            <option
+                              key={room.roomTypeInfo._id}
+                              value={room.roomTypeInfo._id}
+                            >
+                              {room.roomTypeInfo?.typename || "N/A"}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <span className="mr-2">Rating:</span>
+                      <div className="flex space-x-1">
+                        <Rating
+                          initialValue={ratingValue}
+                          onChange={(newValue) => setRatingValue(newValue)}
+                          readonly={false}
+                        />
+                      </div>
+                    </div>
+                    <textarea
+                      className="w-full p-3 border rounded-md"
+                      placeholder="Write your review here..."
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                    ></textarea>
+                    <button
+                      className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                      onClick={() => handleSubmitReview(booking._id)}
+                    >
+                      Submit Review
+                    </button>
                   </div>
-                </div>
-                <textarea
-                  className="w-full p-3 border rounded-md"
-                  placeholder="Write your review here..."
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                ></textarea>
-                <button
-                  className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                  onClick={() => handleSubmitReview(booking._id)}
-                >
-                  Submit Review
-                </button>
-              </div>
-            )}
+                )}
               </div>
             );
           })}
@@ -359,8 +392,8 @@ export default function HistoryBooking() {
           <button
             key={index}
             className={`px-4 py-2 rounded-md ${metadata.currentPage === index + 1
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
               }`}
             onClick={() => handlePageChange(index + 1)}
           >

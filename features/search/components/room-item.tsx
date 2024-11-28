@@ -99,7 +99,7 @@ const RoomItem: React.FC<RoomItemProps> = ({
         <div className="w-full md:w-1/3">
           <Link href="/room/1">
             <Image
-              src="/image2.jpg"
+              src={roomData.images?.[0] || "/image2.jpg"}
               width={450}
               height={280}
               alt="Deluxe Room"

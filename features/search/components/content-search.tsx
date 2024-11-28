@@ -117,7 +117,7 @@ export default function ContentSearch() {
             <select
               className="border rounded-md px-3 py-2"
               value={size}
-              onChange={(e) => setSize(Number(e.target.value))} // Cập nhật size
+              onChange={(e) => setSize(Number(e.target.value))} 
             >
               <option value={5}>5</option>
               <option value={10}>10</option>

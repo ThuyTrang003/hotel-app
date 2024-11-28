@@ -11,6 +11,7 @@ const Confirmation = () => {
   useEffect(() => {
     // Lấy thông tin booking từ localStorage
     const storedData = localStorage.getItem("bookingData");
+    console.log("STORR",storedData)
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);

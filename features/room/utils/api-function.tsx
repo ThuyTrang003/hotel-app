@@ -220,6 +220,29 @@ class RestClient {
       };
     }
   }
+  async momoPayment(amount: number): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}/bookings/payment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ amount }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Payment error:", errorData);
+        throw new Error(`Payment failed with status: ${response.status}`);
+      }
+  
+      return await response.json();
+    } catch (error: any) {
+      console.error("Error processing payment:", error.message);
+      throw error;
+    }
+  }
 }
 
 export default RestClient;
