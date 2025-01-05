@@ -5,8 +5,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { useGetIsAuthorization } from "@/hooks/auth-hook/useAuth";
-
 import { useUserAccount } from "@/stores/user-account/store-user-account";
 
 import { PromotionPreview } from "@/features/customer/promotions/promotions-preview";

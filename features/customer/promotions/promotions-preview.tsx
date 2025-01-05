@@ -1,6 +1,7 @@
 import { PromotionCard } from "./promotion-card";
 import { PromotionCardSkeleton } from "./promotion-card-skeleton";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { useGetAllPromotions } from "@/hooks/promotions-hook/usePromotions";
 
@@ -16,12 +17,13 @@ import {
 } from "@/components/ui/carousel";
 
 export function PromotionPreview() {
+    const router = useRouter();
     const {
         data: allPromotionsData,
         isError,
         error,
         isPending,
-    } = useGetAllPromotions();
+    } = useGetAllPromotions({ valid: true });
     return (
         <section className="px-10 py-12">
             <div className="flex items-center justify-between pb-4">
@@ -31,6 +33,7 @@ export function PromotionPreview() {
                 <Button
                     variant="ghost"
                     className="text-muted-foreground hover:text-foreground"
+                    onClick={() => router.push("/promotions")}
                 >
                     See All
                     <ArrowRight className="ml-2 h-4 w-4" />

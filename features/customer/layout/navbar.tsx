@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useGetIsAuthorization } from "@/hooks/auth-hook/useAuth";
 
@@ -16,9 +16,11 @@ export function Navbar() {
     const router = useRouter();
     const { mutate: isAuthorization } = useGetIsAuthorization();
     const { resetUserAccount, setUserAccount, userAccount } = useUserAccount();
-
+    const hasRun = useRef(false);
     //kiểm tra cho t/h hết token
     useEffect(() => {
+        if (hasRun.current) return; //run 1 lần useEffect này
+        console.log("reload navbar");
         isAuthorization(undefined, {
             onSuccess: (res) => {
                 setUserAccount(res.user_id, res.role);
@@ -27,6 +29,8 @@ export function Navbar() {
                 resetUserAccount();
             },
         });
+
+        hasRun.current = true;
     }, []);
     return (
         // <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -41,23 +45,20 @@ export function Navbar() {
                         className="h-6 w-auto"
                     />
                 </Link>
-                {/* <nav className="hidden items-center space-x-6 md:flex">
-                    <Link href="/hotel" className="text-sm font-medium">
-                        Hotel
+                <nav className="hidden items-center space-x-6 md:flex">
+                    <Link
+                        href="/rooms"
+                        className="text-lg text-muted-foreground hover:font-semibold hover:text-black"
+                    >
+                        Rooms
                     </Link>
-                    <Link href="/flight" className="text-sm font-medium">
-                        Flight
+                    <Link
+                        href="/promotions"
+                        className="text-lg text-muted-foreground hover:font-semibold hover:text-black"
+                    >
+                        Promotions
                     </Link>
-                    <Link href="/train" className="text-sm font-medium">
-                        Train
-                    </Link>
-                    <Link href="/travel" className="text-sm font-medium">
-                        Travel
-                    </Link>
-                    <Link href="/car-rental" className="text-sm font-medium">
-                        Car Rental
-                    </Link>
-                </nav> */}
+                </nav>
             </div>
             {userAccount &&
                 (userAccount.id !== "" ? (
