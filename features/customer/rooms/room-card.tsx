@@ -11,6 +11,13 @@ import { moneyFormatter } from "@/utils/money-formatter";
 import { TypeRoom } from "@/features/admin/rooms/types-table/type-rooms-columns";
 
 import { Button } from "@/components/ui/button";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface RoomCardProps {
     typeRoom: TypeRoom;
@@ -22,12 +29,24 @@ export function RoomCard({ typeRoom }: RoomCardProps) {
     return (
         <div className="group relative overflow-hidden rounded-lg">
             <div className="relative aspect-[4/3] overflow-hidden">
-                <Image
-                    src={typeRoom.images[0]}
-                    alt={typeRoom.typename}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                />
+                <Carousel className="w-full">
+                    <CarouselContent>
+                        {typeRoom.images.map((image, index) => (
+                            <CarouselItem key={index}>
+                                <div className="relative aspect-[4/3]">
+                                    <Image
+                                        src={image}
+                                        alt={`Image ${index + 1}`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2" />
+                    <CarouselNext className="right-2" />
+                </Carousel>
                 <Button
                     variant="ghost"
                     size="icon"

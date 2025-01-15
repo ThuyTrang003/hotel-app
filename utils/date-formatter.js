@@ -98,3 +98,14 @@ export function formatDateForDateTimeLocal(isoDate) {
 
     return formattedDate;
 }
+//date= "2025-01-08T17:00:00.000Z", time=08:30 -> 2025-01-08T08:30:00.000Z
+export const combineDateAndTime = (date, time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    // Tạo đối tượng Date với ngày và giờ ở UTC
+    const newDate = new Date(`${date}T${time}:00.000Z`);
+
+    // Đảm bảo giờ và phút đúng trong UTC
+    newDate.setUTCHours(hours, minutes, 0, 0);
+
+    return newDate.toISOString();
+};

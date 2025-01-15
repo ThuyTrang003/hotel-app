@@ -8,7 +8,6 @@ export const getAllPromotions = async (params) => {
         });
         return response.data;
     } catch (error) {
-        console.error("Get all promotions failed:", error);
         throw error.response.data.error;
     }
 };

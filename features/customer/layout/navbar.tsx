@@ -16,10 +16,8 @@ export function Navbar() {
     const router = useRouter();
     const { mutate: isAuthorization } = useGetIsAuthorization();
     const { resetUserAccount, setUserAccount, userAccount } = useUserAccount();
-    const hasRun = useRef(false);
     //kiểm tra cho t/h hết token
     useEffect(() => {
-        if (hasRun.current) return; //run 1 lần useEffect này
         console.log("reload navbar");
         isAuthorization(undefined, {
             onSuccess: (res) => {
@@ -29,8 +27,6 @@ export function Navbar() {
                 resetUserAccount();
             },
         });
-
-        hasRun.current = true;
     }, []);
     return (
         // <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

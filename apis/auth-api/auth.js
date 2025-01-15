@@ -58,7 +58,6 @@ export const getIsAuthorization = async () => {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        console.error("Authorization failed:", error);
         throw error.response.data.error;
     }
 };

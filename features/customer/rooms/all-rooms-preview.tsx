@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 import { useGetAllTypeRooms } from "@/hooks/rooms-hook/useTypeRooms";
 
+import { combineDateAndTime } from "@/utils/date-formatter";
+
 import { TypeRoom } from "@/features/admin/rooms/types-table/type-rooms-columns";
 
 import { Button } from "@/components/ui/button";
@@ -16,19 +18,22 @@ export function AllRoomsPreview() {
     const searchParams = useSearchParams();
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const startTime = searchParams.get("startTime");
+    const endTime = searchParams.get("endTime");
     const guests = searchParams.get("guests");
 
     const [pageSize, setPageSize] = useState(12);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const [checkInTime, setCheckInTime] = useState<Date>();
-    const [checkOutTime, setCheckOutTime] = useState<Date>();
+    const [checkInTime, setCheckInTime] = useState<string>();
+    const [checkOutTime, setCheckOutTime] = useState<string>();
     const [limit, setLimit] = useState<number>();
 
+    //update search-form theo url path
     useEffect(() => {
-        if (startDate && endDate) {
-            setCheckInTime(new Date(startDate));
-            setCheckOutTime(new Date(endDate));
+        if (startDate && endDate && startTime && endTime) {
+            setCheckInTime(combineDateAndTime(startDate, startTime));
+            setCheckOutTime(combineDateAndTime(endDate, endTime));
         } else {
             setCheckInTime(undefined);
             setCheckOutTime(undefined);
@@ -38,9 +43,13 @@ export function AllRoomsPreview() {
         } else {
             setLimit(undefined);
         }
-    }, [startDate, endDate, guests]);
+    }, [startDate, endDate, startTime, endTime, guests]);
 
-    const { data: allTypeRoomsData, isPending } = useGetAllTypeRooms({
+    const {
+        data: allTypeRoomsData,
+        isPending,
+        isSuccess,
+    } = useGetAllTypeRooms({
         size: pageSize,
         page: pageNumber,
         checkInTime: checkInTime,
@@ -56,13 +65,14 @@ export function AllRoomsPreview() {
                 </h2>
             </div>
 
-            {isPending ? (
+            {isPending && (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {Array.from({ length: 4 }).map((_, index) => (
                         <RoomCardSkeleton key={index} />
                     ))}
                 </div>
-            ) : (
+            )}
+            {isSuccess && (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {allTypeRoomsData?.data.map((typeRoomsData: TypeRoom) => (
                         <RoomCard
@@ -72,12 +82,12 @@ export function AllRoomsPreview() {
                     ))}
                 </div>
             )}
+
             <div className="flex items-center justify-between">
                 <Button
                     onClick={() => setPageNumber(pageNumber - 1)}
                     disabled={pageNumber <= 1}
-                    variant="outline"
-                    className="border-0"
+                    variant="link"
                 >
                     <ArrowLeft size={20} /> Previous
                 </Button>
@@ -89,8 +99,7 @@ export function AllRoomsPreview() {
                     disabled={
                         pageNumber >= allTypeRoomsData?.metadata.totalPages
                     }
-                    variant="outline"
-                    className="border-0"
+                    variant="link"
                 >
                     Next <ArrowRight size={20} />
                 </Button>
