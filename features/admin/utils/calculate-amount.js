@@ -1,25 +1,20 @@
 export function calculateAmount(
     checkInTime,
     checkOutTime,
-    hourlyRate,
-    dailyRate,
+    price,
     overOccupancyCharge,
     redeemedPoint,
     voucherAmount,
 ) {
-    console.log(checkInTime, checkOutTime, hourlyRate, dailyRate);
     const checkInDate = new Date(checkInTime);
     const checkOutDate = new Date(checkOutTime);
 
     const diffMilliseconds = checkOutDate.getTime() - checkInDate.getTime();
-    const diffHours = Math.ceil(diffMilliseconds / (1000 * 60 * 60)); // Làm tròn số giờ
-    const diffDays = Math.floor(diffMilliseconds / (1000 * 60 * 60 * 24)); // Số ngày tròn
-    // Nếu lẻ ngày, tính số giờ còn lại
-    const remainingHours = diffHours - diffDays * 24;
-    console.log(diffDays * dailyRate + remainingHours * hourlyRate);
+    // Tính số ngày, làm tròn lên để đảm bảo 1 ngày tối thiểu
+    const diffDays = Math.ceil(diffMilliseconds / (1000 * 60 * 60 * 24));
 
     // Tính tổng tiền
-    let cost = diffDays * dailyRate + remainingHours * hourlyRate;
+    let cost = diffDays * price;
     cost += overOccupancyCharge - redeemedPoint * 1000;
     if (voucherAmount) {
         cost -= voucherAmount;

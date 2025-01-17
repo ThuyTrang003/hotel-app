@@ -43,7 +43,7 @@ export function SearchForm() {
     const [guests, setGuests] = useState<string | undefined>();
     const [date, setDate] = useState<DateRange | undefined>();
     const [time, setTime] = useState<TimeRange>({
-        fromTime: "12:00",
+        fromTime: "14:00",
         toTime: "12:00",
     });
 
@@ -60,7 +60,7 @@ export function SearchForm() {
             });
         } else {
             setDate(undefined);
-            setTime({ fromTime: "12:00", toTime: "12:00" });
+            setTime({ fromTime: "14:00", toTime: "12:00" });
         }
         if (guestsValue) setGuests(guestsValue);
         else setGuests(undefined);

@@ -26,10 +26,7 @@ export interface TypeRoom {
     description: string;
     typename: string;
     limit: number;
-    price: {
-        hourlyRate: number;
-        dailyRate: number;
-    };
+    price: number;
     images: string[];
     availableRoom: number;
     rating: {
@@ -140,22 +137,14 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
 
     {
         accessorKey: "price",
-        header: "Daily Rate",
+        header: "Price/night",
         cell: ({ row }) => (
             <div className="text-left">
-                {moneyFormatter(row.original.price?.dailyRate)}
+                {moneyFormatter(row.original.price)}
             </div>
         ),
     },
-    {
-        accessorKey: "price",
-        header: " Hourly Rate",
-        cell: ({ row }) => (
-            <div className="text-left">
-                {moneyFormatter(row.original.price?.hourlyRate)}
-            </div>
-        ),
-    },
+
     {
         id: "actions",
         enableHiding: false,
@@ -204,8 +193,7 @@ export const TypeRoomscolumns: ColumnDef<TypeRoom>[] = [
                                         description: typeRoom.description,
                                         typename: typeRoom.typename,
                                         limit: typeRoom.limit,
-                                        dailyRate: typeRoom.price?.dailyRate,
-                                        hourlyRate: typeRoom.price?.hourlyRate,
+                                        price: typeRoom.price,
                                         existingImages: typeRoom.images,
                                     }}
                                     typeRoomId={typeRoom._id}

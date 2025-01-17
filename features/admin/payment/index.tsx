@@ -102,18 +102,15 @@ export function Payment() {
             getValues("redeemedPoint") &&
             getValues("overOccupancyCharge")
         ) {
-            let daily = 0;
-            let hourly = 0;
+            let price = 0;
             typeRooms.map((typeRoom) => {
-                daily += typeRoom.price.dailyRate;
-                hourly += typeRoom.price.hourlyRate;
+                price += typeRoom.price;
             });
 
             const cost = calculateAmount(
                 getValues("checkInTime"),
                 getValues("checkOutTime"),
-                hourly,
-                daily,
+                price,
                 getValues("overOccupancyCharge"),
                 getValues("redeemedPoint"),
             );

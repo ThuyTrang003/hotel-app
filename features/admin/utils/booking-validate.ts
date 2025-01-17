@@ -72,13 +72,30 @@ export class bookingDTO {
         paidAmount: true,
         overOccupancyCharge: true,
     });
-    public static updateSchema = bookingSchema.pick({
-        checkInTime: true,
-        checkOutTime: true,
-        paidAmount: true,
-        currentStatus: true,
-        numberOfGuests: true,
-    });
+    public static updateSchema = bookingSchema
+        .pick({
+            checkInTime: true,
+            checkOutTime: true,
+            paidAmount: true,
+            currentStatus: true,
+            numberOfGuests: true,
+        })
+        .extend({
+            checkInTime: z.string().refine(
+                (value) => {
+                    const date = new Date(value);
+                    return !isNaN(date.getTime()); // Kiểm tra giá trị hợp lệ
+                },
+                { message: "Check-in time must be valid" },
+            ),
+            checkOutTime: z.string().refine(
+                (value) => {
+                    const date = new Date(value);
+                    return !isNaN(date.getTime()); // Kiểm tra giá trị hợp lệ
+                },
+                { message: "Check-out time must be valid" },
+            ),
+        });
 }
 
 export type createBooking = z.infer<typeof bookingDTO.createSchema>;

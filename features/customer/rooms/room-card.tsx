@@ -2,6 +2,7 @@
 
 import { Heart, MapPin, Star } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -24,10 +25,16 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ typeRoom }: RoomCardProps) {
+    const router = useRouter();
     const [isFavorite, setIsFavorite] = useState(false);
-
+    const navigateDetailRoom = () => {
+        router.push(`/rooms/${typeRoom._id}`);
+    };
     return (
-        <div className="group relative overflow-hidden rounded-lg">
+        <div
+            className="group relative cursor-pointer overflow-hidden rounded-lg hover:bg-amber-1/10"
+            onClick={navigateDetailRoom}
+        >
             <div className="relative aspect-[4/3] overflow-hidden">
                 <Carousel className="w-full">
                     <CarouselContent>
@@ -74,13 +81,8 @@ export function RoomCard({ typeRoom }: RoomCardProps) {
                         ({typeRoom.rating.totalRating} reviews)
                     </span>
                 </div>
-                <div className="mt-2">
-                    <div className="text-2xl font-bold">
-                        {moneyFormatter(typeRoom.price.dailyRate)}
-                    </div>
-                    <div className="text-muted-foreground">
-                        Hourly rate: {moneyFormatter(typeRoom.price.hourlyRate)}
-                    </div>
+                <div className="mt-2 text-2xl font-bold">
+                    {moneyFormatter(typeRoom.price)}
                 </div>
             </div>
         </div>

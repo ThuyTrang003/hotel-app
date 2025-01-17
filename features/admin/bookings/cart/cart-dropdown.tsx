@@ -53,16 +53,8 @@ export function CartDropdown({ children }: CartDropdownProps) {
                                             <p>Rooms: {item.numberOfRooms}</p>
                                             <p>Limit: {item.limit} persons</p>
                                             <p>
-                                                Hourly:{" "}
-                                                {moneyFormatter(
-                                                    item.price.hourlyRate,
-                                                )}
-                                            </p>
-                                            <p>
-                                                Daily:{" "}
-                                                {moneyFormatter(
-                                                    item.price.dailyRate,
-                                                )}
+                                                Price/night:{" "}
+                                                {moneyFormatter(item.price)}
                                             </p>
                                         </div>
                                     </div>

@@ -5,10 +5,7 @@ interface CartItem {
     typeId: string;
     numberOfRooms: number;
     typeName: string;
-    price: {
-        hourlyRate: number;
-        dailyRate: number;
-    };
+    price: number;
     limit: number;
 }
 
@@ -18,10 +15,7 @@ interface CartStore {
         typeId: string,
         numberOfRooms: number,
         typeName: string,
-        price: {
-            hourlyRate: number;
-            dailyRate: number;
-        },
+        price: number,
         limit: number,
     ) => void;
     removeFromCart: (typeId: string) => void;

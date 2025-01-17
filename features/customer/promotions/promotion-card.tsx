@@ -1,4 +1,5 @@
-import { CalendarRange, Copy } from "lucide-react";
+import { DetailDialog } from "./detail-dialog";
+import { CalendarRange, Copy, Info } from "lucide-react";
 import { toast } from "sonner";
 
 import { dateFormatter } from "@/utils/date-formatter";
@@ -66,12 +67,18 @@ export function PromotionCard({ promotion }: PromotionCardProps) {
                             </p>
                         </div>
                     </div>
-                    <Badge
-                        variant={isActive ? "default" : "secondary"}
-                        className="w-full justify-center py-1"
-                    >
-                        {isActive ? "Active" : "Inactive"}
-                    </Badge>
+                    <div className="flex items-center justify-between">
+                        <Badge variant={isActive ? "default" : "secondary"}>
+                            {isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <TooltipModel content="More information" side="top">
+                            <DetailDialog promotion={promotion}>
+                                <Button variant="ghost" size="icon">
+                                    <Info className="h-4 w-4" />
+                                </Button>
+                            </DetailDialog>
+                        </TooltipModel>
+                    </div>
                 </div>
             </CardContent>
         </Card>
