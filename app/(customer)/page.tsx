@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useUserAccount } from "@/stores/user-account/store-user-account";
 
 import { PromotionPreview } from "@/features/customer/promotions/promotions-preview";
-import { RoomsPreview } from "@/features/customer/rooms/rooms-preview";
+import { RoomsPreview } from "@/features/customer/rooms/preview/rooms-preview";
 import { SearchForm } from "@/features/customer/search/search-form";
 import { FavoriteRooms } from "@/features/home/components/favorite-rooms";
 import Feature from "@/features/home/components/feature-home";

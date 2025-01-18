@@ -1,4 +1,4 @@
-import { AllRoomsPreview } from "@/features/customer/rooms/all-rooms-preview";
+import { AllRoomsPreview } from "@/features/customer/rooms/preview/all-rooms-preview";
 import { SearchForm } from "@/features/customer/search/search-form";
 
 export default function RoomsPage() {

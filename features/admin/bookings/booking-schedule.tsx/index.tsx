@@ -96,13 +96,6 @@ export function BookingsTable() {
         checkInTime: getStartOfDayISO(weekStart),
         checkOutTime: toEndOfDayISO(weekEnd),
     });
-    console.log(
-        isDateInRange(
-            "21/01/2023",
-            "2023-01-20T14:00:00.000Z",
-            "2023-01-22T12:00:00.000Z",
-        ),
-    );
     return (
         <>
             <div className="flex flex-col">
