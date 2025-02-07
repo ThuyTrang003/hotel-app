@@ -13,6 +13,16 @@ export const getAllTypeRooms = async (params) => {
     }
 };
 
+export const getTypeRoomById = async (typeRoomId) => {
+    const url = `/api/type-rooms/${typeRoomId}`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        throw error.response.data.error;
+    }
+};
+
 export const createTypeRoom = async (formData) => {
     const url = "/api/type-rooms";
     try {

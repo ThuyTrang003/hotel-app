@@ -15,7 +15,10 @@ const geistMono = localFont({
     variable: "--font-geist-mono",
     weight: "100 900",
 });
-
+//Định nghĩa Metadata cho RootLayout
+export const metadata: Metadata = {
+    title: "Hotel Zante", // Tiêu đề hiển thị trên tab trình duyệt
+};
 export default function RootLayout({
     children,
 }: Readonly<{

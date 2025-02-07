@@ -62,6 +62,9 @@ export function RoomDialog({
             createRoom(data, {
                 onSuccess: () => {
                     toast.success("Add room success!");
+                    queryClient.invalidateQueries({
+                        queryKey: ["getAllTypeRooms"],
+                    });
                     setOpen(false);
                 },
                 onError: () => {

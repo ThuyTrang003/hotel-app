@@ -7,8 +7,6 @@ import { useState } from "react";
 import { useCartStore } from "@/stores/admin/store-cart";
 import { useSidebar } from "@/stores/admin/store-sidebar";
 
-import { SearchBar } from "@/features/search/component/search-bar";
-
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
 

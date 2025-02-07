@@ -13,7 +13,7 @@ export const signin = async (payload) => {
 
 export const signup = async (payload) => {
     payload = {
-        fullName: payload.fullName.trim(),
+        fullName: payload.fullName,
         birthDate: payload.dateOfBirth,
         email: payload.email,
         gender: payload.gender,
@@ -41,6 +41,16 @@ export const logout = async () => {
         throw error.response.data.error;
     }
 };
+export const verifyEmail = async (token) => {
+    const url = "/api/auth/verify";
+    try {
+        const response = await axios.get(url, { token });
+        return response.data.message;
+    } catch (error) {
+        console.error("Verify email failed:", error);
+        throw error.response.data.error;
+    }
+};
 
 export const getIsAuthorization = async () => {
     const url = "/api/auth/current-user";
@@ -48,7 +58,6 @@ export const getIsAuthorization = async () => {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        console.error("Authorization failed:", error);
         throw error.response.data.error;
     }
 };

@@ -14,19 +14,18 @@ const Feature = () => {
                         High quality accommodation services
                     </h3>
                     <p className="text-black-50 mb-10 max-w-lg text-[15px] leading-[1.3]">
-                        Lorem ipsum dolor sit amet, consectetuer adipiscing
-                        elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-                        dolore magna aliquam erat volutpat. Ut wisi enim ad
-                        minim veniam, quis nostrud exerci tation ullamcorper
-                        suscipit lobortis nisl ut aliquip ex ea commodo
-                        consequat. Duis autem vel eum iriure dolor in hendrerit
-                        in vulputate velit molestie consequat, vel illum dolore
-                        eu feugiat nulla facilisis at vero eros et accumsan.
+                    Welcome to Hotel Zante, where timeless elegance meets modern comfort. Established in 1992, our hotel has been a sanctuary for travelers seeking exceptional hospitality, 
+                    breathtaking surroundings, and memorable experiences. We offer a perfect blend of 
+                    luxury and relaxation for families, couples, and business travelers alike.<br/>
+
+                    From our elegantly designed rooms and suites to our top-notch amenities, every detail is thoughtfully 
+                    curated to ensure your stay is nothing short of extraordinary. 
+                    Savor culinary delights at our on-site restaurant, unwind by the pool, or explore the vibrant local culture just steps from our doors.<br/>
                     </p>
                     <div className="text-left">
                         <Link
-                            href="/about-us"
-                            className="bg-amber-1 hover:bg-amber-1/80 inline-block rounded-md px-6 py-3 font-semibold text-white shadow-md transition-colors"
+                            href="/room"
+                            className="inline-block rounded-md bg-amber-1 px-6 py-3 font-semibold text-white shadow-md transition-colors hover:bg-amber-1/80"
                         >
                             More Details
                             <ChevronRight className="ml-2 inline-block h-5 w-5" />

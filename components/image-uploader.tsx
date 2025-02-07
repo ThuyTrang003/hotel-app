@@ -22,7 +22,10 @@ export default function ImageUploader({
     const [previews, setPreviews] = useState<string[]>([]);
 
     useEffect(() => {
-        setPreviews(existingPreviews);
+        // setPreviews(existingPreviews);
+        if (existingPreviews.length > 0) {
+            setPreviews(existingPreviews);
+        }
     }, [existingPreviews]);
 
     const onDrop = useCallback(
@@ -89,6 +92,7 @@ export default function ImageUploader({
                                 width={100}
                             />
                             <Button
+                                type="button"
                                 variant="secondary"
                                 size="icon"
                                 className="absolute right-1 top-1 opacity-0 transition-opacity group-hover:opacity-100"

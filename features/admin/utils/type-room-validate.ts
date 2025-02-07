@@ -13,16 +13,7 @@ const typeRoomSchema = z.object({
             message: "Value must be a valid integer",
         }) // Đảm bảo sau chuyển đổi là số nguyên
         .refine((val) => val > 0, { message: "Value must be greater than 0" }),
-    hourlyRate: z
-        .union([z.string(), z.number()])
-        .transform((val) => String(val).trim()) // Chuyển đổi chuỗi thành số
-        .refine((val) => /^[0-9]+(\.[0-9]+)?$/.test(String(val)), {
-            message: "Value must be a valid number",
-        })
-        .transform((val) => parseFloat(val))
-        .refine((val) => !isNaN(val), { message: "Value must be a number" }) // Kiểm tra nếu giá trị là một số hợp lệ
-        .refine((val) => val > 0, { message: "Value must be greater than 0" }),
-    dailyRate: z
+    pricePerNight: z
         .union([z.string(), z.number()])
         .transform((val) => String(val).trim()) // Chuyển đổi chuỗi thành số
         .refine((val) => /^[0-9]+(\.[0-9]+)?$/.test(String(val)), {
@@ -41,8 +32,7 @@ export class TypeRoomDTO {
         typename: true,
         description: true,
         limit: true,
-        hourlyRate: true,
-        dailyRate: true,
+        pricePerNight: true,
     });
 }
 

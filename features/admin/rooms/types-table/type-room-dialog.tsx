@@ -35,8 +35,7 @@ interface TypeDialogProps {
         description: string;
         typename: string;
         limit: number;
-        hourlyRate: number;
-        dailyRate: number;
+        price: number;
         existingImages?: string[];
     };
 }
@@ -56,7 +55,6 @@ export function TypeRoomDialog({
         register,
         handleSubmit,
         formState: { errors },
-        getValues,
         setValue,
     } = useForm<createTypeRoom>({
         resolver: zodResolver(TypeRoomDTO.createSchema),
@@ -68,8 +66,7 @@ export function TypeRoomDialog({
         formData.append("description", data.description);
         formData.append("typename", data.typename);
         formData.append("limit", String(data.limit));
-        formData.append("price[hourlyRate]", String(data.hourlyRate));
-        formData.append("price[dailyRate]", String(data.dailyRate));
+        formData.append("price", String(data.pricePerNight));
         images.forEach((image, index) => {
             console.log(image);
             formData.append("images", image); // 'images[]' là tên trường gửi lên server
@@ -113,18 +110,10 @@ export function TypeRoomDialog({
             setValue("typename", defaultValue.typename);
             setValue("description", defaultValue.description);
             setValue("limit", defaultValue.limit);
-            setValue("hourlyRate", defaultValue.hourlyRate);
-            setValue("dailyRate", defaultValue.dailyRate);
+            setValue("pricePerNight", defaultValue.price);
             setIsCreate(false);
             console.log(defaultValue);
         }
-        // else {
-        //     setValue("typename", "");
-        //     setValue("description", "");
-        //     setValue("limit", 0);
-        //     setValue("hourlyRate", 0);
-        //     setValue("dailyRate", 0);
-        // }
         setOpen(newOpen);
     };
     return (
@@ -186,32 +175,16 @@ export function TypeRoomDialog({
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label
-                                    htmlFor="hourlyRate"
+                                    htmlFor="pricePerNight"
                                     className="text-right"
                                 >
-                                    Hourly price
+                                    Price per night
                                 </Label>
                                 <div className="col-span-3">
-                                    <Input {...register("hourlyRate")} />
-                                    {errors.hourlyRate && (
+                                    <Input {...register("pricePerNight")} />
+                                    {errors.pricePerNight && (
                                         <ErrorField>
-                                            {errors.hourlyRate.message}
-                                        </ErrorField>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label
-                                    htmlFor="dailyRate"
-                                    className="text-right"
-                                >
-                                    Daily price
-                                </Label>
-                                <div className="col-span-3">
-                                    <Input {...register("dailyRate")} />
-                                    {errors.dailyRate && (
-                                        <ErrorField>
-                                            {errors.dailyRate.message}
+                                            {errors.pricePerNight.message}
                                         </ErrorField>
                                     )}
                                 </div>
