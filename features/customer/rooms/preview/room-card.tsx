@@ -58,7 +58,10 @@ export function RoomCard({ typeRoom }: RoomCardProps) {
                     variant="ghost"
                     size="icon"
                     className="absolute right-2 top-2 z-10 bg-white/70 hover:bg-white"
-                    onClick={() => setIsFavorite(!isFavorite)}
+                    onClick={(e) => {
+                        e.stopPropagation(); // Ngăn chặn sự kiện lan đến `div
+                        setIsFavorite(!isFavorite);
+                    }}
                 >
                     <Heart
                         className={cn(
